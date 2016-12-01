@@ -1,9 +1,12 @@
 import pygame
 import esper
 
+import Box2D
+from Box2D.b2 import (polygonShape, staticBody, dynamicBody)
+
 import core
 
-from components import Velocity, Renderable
+from components import (Velocity, Renderable, Position)
 from systems import MovementSystem, RenderSystem
 
 
@@ -18,17 +21,23 @@ def main():
     pygame.key.set_repeat(1, 1)
     screen = pygame.display.set_mode(RESOLUTION)
     world = esper.World()
+
+    pworld = Box2D.b2.world(gravity=(0, -10), doSleep=True)
+
+    ground_body = pworld.CreateStaticBody(
+        position=(0, 1),
+        shapes=polygonShape(box=(50, 5)),
+    )
+
     player = world.create_entity()
     world.add_component(player, Velocity(x=0, y=0))
+    world.add_component(player, Position(x=100, y=100))
     player_image = pygame.image.load("assets/player.png")
-    world.add_component(player, Renderable(image=player_image,
-                                           x=100,
-                                           y=100))
+    world.add_component(player, Renderable(image=player_image))
     enemy = world.create_entity()
+    world.add_component(enemy, Position(x=400, y=250))
     enemy_image = pygame.image.load("assets/enemy.png")
-    world.add_component(enemy, Renderable(image=enemy_image,
-                                          x=400,
-                                          y=250))
+    world.add_component(enemy, Renderable(image=enemy_image))
 
     render_system = RenderSystem(screen=screen)
     movement_system = MovementSystem(minx=0,

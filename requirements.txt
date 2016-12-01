@@ -1,2 +1,3 @@
 pygame>=1.9.2b8
 esper>=0.9.7
+box2d>=2.3.2

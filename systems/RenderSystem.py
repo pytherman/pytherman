@@ -1,7 +1,7 @@
 import pygame
 import esper
 
-from components import Renderable
+from components import (Position, Renderable)
 
 
 class RenderSystem(esper.Processor):
@@ -12,6 +12,8 @@ class RenderSystem(esper.Processor):
 
     def process(self):
         self.screen.fill(self.clear_color)
-        for entity, renderable in self.world.get_component(Renderable):
-            self.screen.blit(renderable.image, (renderable.x, renderable.y))
+        for (entity,
+             (position,
+              renderable)) in self.world.get_components(Position, Renderable):
+            self.screen.blit(renderable.image, (position.x, position.y))
         pygame.display.flip()
