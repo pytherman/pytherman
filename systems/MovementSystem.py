@@ -1,22 +1,17 @@
+"""Movement system"""
+
 import esper
 
-from components import (Velocity, Position, Renderable)
+from components import Physics, Velocity
 
 
 class MovementSystem(esper.Processor):
-    def __init__(self, minx, maxx, miny, maxy):
+    """Responsible for moving entities."""
+
+    def __init__(self):
         super().__init__()
-        self.minx = minx
-        self.maxx = maxx
-        self.miny = miny
-        self.maxy = maxy
 
     def process(self):
-        for components in self.world.get_components(Velocity, Position, Renderable):
-            entity, (velocity, position, renderable) = components
-            position.x += velocity.x
-            position.y += velocity.y
-            position.x = max(self.minx, position.x)
-            position.y = max(self.miny, position.y)
-            position.x = min(self.maxx - renderable.w, position.x)
-            position.y = min(self.maxy - renderable.h, position.y)
+        for (_, (velocity,
+                 physics)) in self.world.get_components(Velocity, Physics):
+            physics.body.linearVelocity = (velocity.x, velocity.y)

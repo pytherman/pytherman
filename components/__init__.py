@@ -1,3 +1,5 @@
+"""Module contains all components, which can be used by entities."""
+
 from .Velocity import Velocity
 from .Renderable import Renderable
-from .Position import Position
+from .Physics import Physics
