@@ -57,5 +57,5 @@ class Pytherman:
 
 
 if __name__ == '__main__':
-    Pytherman()
+    Pytherman.pytherman()
     pygame.quit()
