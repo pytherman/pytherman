@@ -90,3 +90,9 @@ ENV/
 
 # Sublime Text 3
 *.sublime-workspace
+
+# PyCharm
+*.idea
+
+# Vagrant
+.vagrant
