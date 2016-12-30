@@ -109,7 +109,7 @@ if __name__ == "__main__":
         print ('Hello')
 
     def startgame():
-        pytherman.Pytherman()
+        pytherman.main()
 
     screen = pygame.display.set_mode((640, 480), 0, 32)
     pygame.display.set_caption('Game Menu')
