@@ -10,53 +10,67 @@ from components import Physics, Renderable, Velocity
 from systems import MovementSystem, RenderSystem
 
 FPS = 60
+PPM = 20  # Pixels per meter (box2d scaling factor)
 RESOLUTION = 720, 480
 TIME_STEP = 1.0 / FPS
 
 
+def setup_world_boundaries(pworld):
+    """Sets static walls around board."""
+    pworld.CreateStaticBody(
+        position=(0, 0),
+        shapes=edgeShape(vertices=((0, 0), (36, 0)))
+    )
+    pworld.CreateStaticBody(
+        position=(0, 0),
+        shapes=edgeShape(vertices=((0, 0), (0, 24)))
+    )
+    pworld.CreateStaticBody(
+        position=(0, 0),
+        shapes=edgeShape(vertices=((36, 24), (0, 24)))
+    )
+    pworld.CreateStaticBody(
+        position=(0, 0),
+        shapes=edgeShape(vertices=((36, 24), (36, 0)))
+    )
+
+
 def main():
     """Entry point for the game."""
-
     pygame.display.set_caption('Pytherman')
     clock = pygame.time.Clock()
     pygame.key.set_repeat(1, 1)
     screen = pygame.display.set_mode(RESOLUTION)
-    world = esper.World()
 
     pworld = Box2D.b2.world(gravity=(0, 0), doSleep=True)
+    setup_world_boundaries(pworld)
 
-    world_edges = [
-        pworld.CreateStaticBody(
-            position=(0, 0),
-            shapes=edgeShape(vertices=((0, 0), (36, 0)))
-        ),
-        pworld.CreateStaticBody(
-            position=(0, 0),
-            shapes=edgeShape(vertices=((0, 0), (0, 24)))
-        ),
-        pworld.CreateStaticBody(
-            position=(0, 0),
-            shapes=edgeShape(vertices=((36, 24), (0, 24)))
-        ),
-        pworld.CreateStaticBody(
-            position=(0, 0),
-            shapes=edgeShape(vertices=((36, 24), (36, 0)))
-        )]
-
+    world = esper.World()
+    # Not sure if this is a good practice
+    world.RESOLUTION = RESOLUTION
+    world.PPM = PPM
     player = world.create_entity()
     player_image = pygame.image.load("assets/player.png")
     player_renderable = Renderable(image=player_image)
-    player_body = pworld.CreateDynamicBody(position=(10, 10), angle=0)
-    player_body.CreatePolygonFixture(box=(2, 1),
+    player_body = pworld.CreateDynamicBody(position=(10, 10))
+    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2,
+                                          player_renderable.h / world.PPM / 2),
                                      density=1,
-                                     friction=0.3,
-                                     userData=player_renderable)
+                                     friction=0.3)
     world.add_component(player, Physics(body=player_body))
     world.add_component(player, Velocity(x=0, y=0))
+    world.add_component(player, player_renderable)
 
     enemy = world.create_entity()
     enemy_image = pygame.image.load("assets/enemy.png")
-    world.add_component(enemy, Renderable(image=enemy_image))
+    enemy_renderable = Renderable(image=enemy_image)
+    enemy_body = pworld.CreateDynamicBody(position=(20, 20))
+    enemy_body.CreatePolygonFixture(box=(enemy_renderable.w / world.PPM / 2,
+                                         enemy_renderable.h / world.PPM / 2),
+                                    density=1,
+                                    friction=0.3)
+    world.add_component(enemy, Physics(body=enemy_body))
+    world.add_component(enemy, enemy_renderable)
 
     render_system = RenderSystem(screen=screen)
     movement_system = MovementSystem()

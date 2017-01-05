@@ -103,10 +103,9 @@ class Menu:
             pygame.display.flip()
 
 
-
 if __name__ == "__main__":
     def hello():
-        print ('Hello')
+        print('Hello')
 
     def startgame():
         pytherman.main()

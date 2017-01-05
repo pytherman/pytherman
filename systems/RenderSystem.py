@@ -3,11 +3,7 @@
 import esper
 import pygame
 
-from components import Physics
-
-# scaling factor, from box2d world to pygame world
-# for box2d, without scaling, 1 pixel is equal to 1 meter
-PPM = 20.0
+from components import Physics, Renderable
 
 
 class RenderSystem(esper.Processor):
@@ -20,14 +16,31 @@ class RenderSystem(esper.Processor):
 
     def process(self):
         self.screen.fill(self.clear_color)
-        for _, physics in self.world.get_component(Physics):
+        for _, (renderable,
+                physics) in self.world.get_components(Renderable, Physics):
             body = physics.body
+            # Currently this is used to draw a debug physics shapes
             for fixture in body.fixtures:
                 shape = fixture.shape
-                vertices = [(body.transform * v) * PPM for v in shape.vertices]
-                vertices = [(v[0], 480 - v[1]) for v in vertices]
+                # We need to transform vertices from box2d prespective
+                # to pygame prespective - first scaling
+                vertices = [(body.transform * v) *
+                            self.world.PPM for v in shape.vertices]
+                # Then we need to transform coordinate system
+                # box2d uses standard one, pygame uses one with (0,0)
+                # in top left corner
+                vertices = [(v[0],
+                             self.world.RESOLUTION[1] - v[1])
+                            for v in vertices]
                 pygame.draw.polygon(self.screen,
                                     (0, 0, 255, 255),
                                     vertices)
-            # self.screen.blit(renderable.image, (position.x, position.y))
+            # We need to apply the very same transformation as for
+            # debug drawing, but also we need to keep in mind that
+            # the point in which image will be rendered will be
+            # the top left corner of the image, not center
+            v = [v * self.world.PPM for v in body.position]
+            v = [v[0] - renderable.w / 2,
+                 self.world.RESOLUTION[1] - v[1] - renderable.h / 2]
+            self.screen.blit(renderable.image, v)
         pygame.display.flip()
