@@ -8,6 +8,7 @@ from Box2D.b2 import edgeShape
 import core
 from components import Physics, Renderable, Velocity
 from systems import MovementSystem, RenderSystem
+import drawboard
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -35,6 +36,7 @@ def setup_world_boundaries(pworld):
     )
 
 
+
 def main():
     """Entry point for the game."""
     pygame.display.set_caption('Pytherman')
@@ -46,15 +48,17 @@ def main():
     setup_world_boundaries(pworld)
 
     world = esper.World()
+    drawboard.draw_board(pworld, world, PPM, RESOLUTION)
+
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
     player = world.create_entity()
     player_image = pygame.image.load("assets/player.png")
     player_renderable = Renderable(image=player_image)
-    player_body = pworld.CreateDynamicBody(position=(10, 10))
-    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2,
-                                          player_renderable.h / world.PPM / 2),
+    player_body = pworld.CreateDynamicBody(position=(player_renderable.w/PPM, player_renderable.w/PPM))
+    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 3,
+                                          player_renderable.w / world.PPM / 3),
                                      density=1,
                                      friction=0.3)
     world.add_component(player, Physics(body=player_body))
@@ -64,9 +68,10 @@ def main():
     enemy = world.create_entity()
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)
-    enemy_body = pworld.CreateDynamicBody(position=(20, 20))
-    enemy_body.CreatePolygonFixture(box=(enemy_renderable.w / world.PPM / 2,
-                                         enemy_renderable.h / world.PPM / 2),
+    enemy_body = pworld.CreateDynamicBody(position=(world.RESOLUTION[0]/PPM - int(player_renderable.w/PPM),
+                                                    world.RESOLUTION[1]/PPM - int(player_renderable.w/PPM)))
+    enemy_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2,
+                                         player_renderable.w / world.PPM / 2),
                                     density=1,
                                     friction=0.3)
     world.add_component(enemy, Physics(body=enemy_body))
