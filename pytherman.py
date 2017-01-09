@@ -9,6 +9,7 @@ import core
 from components import Physics, Renderable, Velocity
 from systems import MovementSystem, RenderSystem
 import drawboard
+from messaging import MessageBus
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -36,7 +37,6 @@ def setup_world_boundaries(pworld):
     )
 
 
-
 def main():
     """Entry point for the game."""
     pygame.display.set_caption('Pytherman')
@@ -53,12 +53,15 @@ def main():
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
+    world.msg_bus = MessageBus()
+
     player = world.create_entity()
+    world.player = player
     player_image = pygame.image.load("assets/player.png")
     player_renderable = Renderable(image=player_image)
     player_body = pworld.CreateDynamicBody(position=(player_renderable.w/PPM, player_renderable.w/PPM))
-    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 3,
-                                          player_renderable.w / world.PPM / 3),
+    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2 - 0.1,
+                                          player_renderable.w / world.PPM / 2 - 0.1),
                                      density=1,
                                      friction=0.3)
     world.add_component(player, Physics(body=player_body))
@@ -82,7 +85,7 @@ def main():
     world.add_processor(render_system)
     world.add_processor(movement_system)
 
-    event_handler = core.EventHandler(world=world, player=player)
+    event_handler = core.EventHandler(world=world)
     while event_handler.is_running():
         for event in pygame.event.get():
             event_handler.handle(event)
@@ -90,6 +93,7 @@ def main():
         pworld.ClearForces()
         world.process()
         clock.tick(FPS)
+        world.msg_bus.clear()
 
 
 if __name__ == '__main__':

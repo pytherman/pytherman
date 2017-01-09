@@ -5,7 +5,7 @@ class MessageBus(object):
     def add(self, message):
         self.messages.append(message)
 
-    def getByType(self, msg_type):
+    def get_by_type(self, msg_type):
         return [msg for msg in self.messages if msg.type == msg_type]
 
     def clear(self):
