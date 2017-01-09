@@ -1,7 +1,9 @@
 """draw area of game"""
 
-import pygame
 import random
+
+import pygame
+
 from components import Physics, Renderable
 
 

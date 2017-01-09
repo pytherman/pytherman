@@ -1,7 +1,8 @@
+import sys
 from collections import OrderedDict
 
 import pygame
-import sys
+
 import pytherman
 from menuitem import MenuItem
 

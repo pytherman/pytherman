@@ -3,7 +3,7 @@
 
 import pygame
 
-from messaging import IntentMessage, Intent
+from messaging import Intent, IntentMessage
 
 
 class EventHandler(object):
@@ -17,24 +17,27 @@ class EventHandler(object):
     def handle(self, event):
         """Handles pygame event."""
 
+        player = self.world.player
         if event.type == pygame.QUIT:
             self.running = False
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_LEFT))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_LEFT))
             elif event.key == pygame.K_RIGHT:
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_RIGHT))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_RIGHT))
             elif event.key == pygame.K_UP:
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_UP))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_UP))
             elif event.key == pygame.K_DOWN:
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_DOWN))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_DOWN))
+            elif event.key == pygame.K_RETURN:
+                self.world.msg_bus.add(IntentMessage(player, Intent.PLANT_BOMB))
             elif event.key == pygame.K_ESCAPE:
                 self.running = False
         elif event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_CLEAR_HORIZONTAL))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_CLEAR_HORIZONTAL))
             if event.key in (pygame.K_UP, pygame.K_DOWN):
-                self.world.msg_bus.add(IntentMessage(Intent.MOVE_CLEAR_VERTICAL))
+                self.world.msg_bus.add(IntentMessage(player, Intent.MOVE_CLEAR_VERTICAL))
 
     def is_running(self):
         """Checks if the game is still running."""

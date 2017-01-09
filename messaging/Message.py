@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 MessageType = Enum('MessageType', 'INTENT COLLISION DAMAGE')
 
 
@@ -10,10 +9,12 @@ class Message(object):
 
 
 Intent = Enum('Intent', 'MOVE_UP MOVE_DOWN MOVE_RIGHT MOVE_LEFT \
-                         MOVE_CLEAR_VERTICAL MOVE_CLEAR_HORIZONTAL')
+                         MOVE_CLEAR_VERTICAL MOVE_CLEAR_HORIZONTAL\
+                         PLANT_BOMB')
 
 
 class IntentMessage(Message):
-    def __init__(self, intent):
+    def __init__(self, source, intent):
         super().__init__(MessageType.INTENT)
+        self.source = source
         self.intent = intent
