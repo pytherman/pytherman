@@ -6,12 +6,14 @@ import math
 import Box2D
 
 from components import Physics, Explodable
+from messaging import DamageMessage
 from Box2D.b2 import vec2
 
 
 NUM_RAYS = 32
 BLAST_RADIUS = 4
 BLAST_POWER = 1000
+BLAST_DAMAGE = 1
 
 
 class ExplosionSystem(esper.Processor):
@@ -38,6 +40,8 @@ class ExplosionSystem(esper.Processor):
                         callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
                                                          point=callback.point,
                                                          wake=True)
+                        self.world.msg_bus.add(DamageMessage(entity, callback.fixture.body.userData, BLAST_DAMAGE))
+                self.world.pworld.DestroyBody(physics.body)
                 self.world.delete_entity(entity)
 
     def _should_explode(self, explodable):

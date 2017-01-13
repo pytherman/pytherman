@@ -4,7 +4,7 @@ import random
 
 import pygame
 
-from components import Physics, Renderable
+from components import Physics, Renderable, Health
 
 
 def create_field(world, pworld, position_x, position_y, field_renderable):
@@ -16,17 +16,25 @@ def create_field(world, pworld, position_x, position_y, field_renderable):
     world.add_component(field, field_renderable)
 
 
-def create_field_with_physics(world, pworld, position_x, position_y, field_size, field_renderable):
+def create_field_with_physics(world, pworld, position_x, position_y, field_size, field_renderable, is_static=False):
     """draw field with physics"""
     field = world.create_entity()
-    field_body = pworld.CreateDynamicBody(
-        position=(position_x, position_y))
+    if is_static:
+        field_body = pworld.CreateStaticBody(
+            position=(position_x, position_y),
+            userData=field)
+    else:
+        field_body = pworld.CreateDynamicBody(
+            position=(position_x, position_y),
+            userData=field)
     field_body.CreatePolygonFixture(box=(field_size / 2,
                                          field_size / 2),
                                     density=1,
                                     friction=0.3)
     world.add_component(field, Physics(body=field_body))
     world.add_component(field, field_renderable)
+    if not is_static:
+        world.add_component(field, Health(hp=2))
 
 
 def prepare_list_of_fields_to_add_special_walls(resolution, field_size):
@@ -70,7 +78,7 @@ def draw_special_fields(world, pworld, PPM, RESOLUTION):
     for i in range(number_of_concrete_fields):
         x, y = (random.choice(fields_to_add_walls))
         create_field_with_physics(world, pworld, x * field_size + field_size / 2, y * field_size + field_size / 2,
-                                  field_size, concrete_field_renderable)
+                                  field_size, concrete_field_renderable, True)
         fields_to_add_walls.remove((x, y))
 
 
@@ -111,13 +119,13 @@ def draw_border_walls(pworld, world, PPM, RESOLUTION):
 
     for i in range(number_of_columns):
         create_field_with_physics(world, pworld, field_size / 2 + i * field_size, field_size / 2,
-                                  field_size, field_renderable)
+                                  field_size, field_renderable, True)
         create_field_with_physics(world, pworld, field_size / 2 + i * field_size,
                                   number_of_rows * field_size - field_size / 2, field_size,
-                                  field_renderable)
+                                  field_renderable, True)
 
     for i in range(1, number_of_rows - 1):
         create_field_with_physics(world, pworld, field_size / 2, field_size / 2 + i * field_size,
-                                  field_size, field_renderable)
+                                  field_size, field_renderable, True)
         create_field_with_physics(world, pworld, number_of_columns * field_size - field_size / 2,
-                                  field_size / 2 + i * field_size, field_size, field_renderable)
+                                  field_size / 2 + i * field_size, field_size, field_renderable, True)

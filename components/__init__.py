@@ -5,3 +5,4 @@ from .Renderable import Renderable
 from .Physics import Physics
 from .Bomber import Bomber
 from .Explodable import Explodable
+from .Health import Health

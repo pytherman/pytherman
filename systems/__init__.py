@@ -4,3 +4,4 @@ from .MovementSystem import MovementSystem
 from .RenderSystem import RenderSystem
 from .ActionSystem import ActionSystem
 from .ExplosionSystem import ExplosionSystem
+from .DamageSystem import DamageSystem

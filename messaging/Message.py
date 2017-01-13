@@ -18,3 +18,11 @@ class IntentMessage(Message):
         super().__init__(MessageType.INTENT)
         self.source = source
         self.intent = intent
+
+
+class DamageMessage(Message):
+    def __init__(self, source, target, damage):
+        super().__init__(MessageType.DAMAGE)
+        self.source = source
+        self.target = target
+        self.damage = damage
