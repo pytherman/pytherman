@@ -19,7 +19,7 @@ def create_field(world, pworld, position_x, position_y, field_renderable):
 def create_field_with_physics(world, pworld, position_x, position_y, field_size, field_renderable):
     """draw field with physics"""
     field = world.create_entity()
-    field_body = pworld.CreateStaticBody(
+    field_body = pworld.CreateDynamicBody(
         position=(position_x, position_y))
     field_body.CreatePolygonFixture(box=(field_size / 2,
                                          field_size / 2),

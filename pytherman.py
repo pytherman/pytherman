@@ -69,7 +69,7 @@ def main():
     world.add_component(player, Physics(body=player_body))
     world.add_component(player, Velocity(x=0, y=0))
     world.add_component(player, player_renderable)
-    world.add_component(player, Bomber(max=3, cooldown=5))
+    world.add_component(player, Bomber(max=3, cooldown=2))
 
     enemy = world.create_entity()
     enemy_image = pygame.image.load("assets/enemy.png")

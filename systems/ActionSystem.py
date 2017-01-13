@@ -22,7 +22,7 @@ class ActionSystem(esper.Processor):
                                                          Bomber)
                 source_physics = self.world.component_for_entity(intent.source,
                                                                  Physics)
-                if bomber.used < bomber.max:
+                if bomber.used < bomber.max or True:
                     if time.time() > bomber.last_planted + bomber.cooldown:
                         self._spawn_bomb(source_physics)
                         bomber.last_planted = time.time()
@@ -47,4 +47,4 @@ class ActionSystem(esper.Processor):
         self.world.add_component(bomb, Physics(body=bomb_body))
         self.world.add_component(bomb, bomb_renderable)
         self.world.add_component(bomb,
-                                 Explodable(explosion_time=time.time() + 3))
+                                 Explodable(explosion_time=time.time() + 1))
