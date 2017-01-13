@@ -11,6 +11,7 @@ from Box2D.b2 import vec2
 
 NUM_RAYS = 32
 BLAST_RADIUS = 4
+BLAST_POWER = 1000
 
 
 class ExplosionSystem(esper.Processor):
@@ -32,7 +33,9 @@ class ExplosionSystem(esper.Processor):
                     self.world.pworld.RayCast(callback, physics.body.position,
                                               ray_end)
                     if callback.fixture:
-                        callback.fixture.body.ApplyForce(force=(100000, 0),
+                        force = callback.point - physics.body.position
+                        force.Normalize()
+                        callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
                                                          point=callback.point,
                                                          wake=True)
                 self.world.delete_entity(entity)
