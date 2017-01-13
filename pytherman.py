@@ -9,7 +9,7 @@ import core
 import drawboard
 from components import Bomber, Physics, Renderable, Velocity
 from messaging import MessageBus
-from systems import ActionSystem, MovementSystem, RenderSystem
+from systems import ActionSystem, MovementSystem, RenderSystem, ExplosionSystem
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -85,9 +85,11 @@ def main():
     render_system = RenderSystem(screen=screen)
     movement_system = MovementSystem()
     action_system = ActionSystem()
+    explosion_system = ExplosionSystem()
     world.add_processor(render_system)
     world.add_processor(movement_system)
     world.add_processor(action_system)
+    world.add_processor(explosion_system)
 
     event_handler = core.EventHandler(world=world)
     while event_handler.is_running():

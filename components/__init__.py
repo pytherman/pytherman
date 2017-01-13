@@ -4,3 +4,4 @@ from .Velocity import Velocity
 from .Renderable import Renderable
 from .Physics import Physics
 from .Bomber import Bomber
+from .Explodable import Explodable

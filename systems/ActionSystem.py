@@ -5,7 +5,7 @@ import time
 import esper
 import pygame
 
-from components import Bomber, Physics, Renderable
+from components import Bomber, Physics, Renderable, Explodable
 from messaging import Intent, MessageType
 
 
@@ -46,3 +46,5 @@ class ActionSystem(esper.Processor):
         bomb_body.active = False
         self.world.add_component(bomb, Physics(body=bomb_body))
         self.world.add_component(bomb, bomb_renderable)
+        self.world.add_component(bomb,
+                                 Explodable(explosion_time=time.time() + 3))
