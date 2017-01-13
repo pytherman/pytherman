@@ -61,8 +61,9 @@ def main():
     player_image = pygame.image.load("assets/player.png")
     player_renderable = Renderable(image=player_image)
     player_body = pworld.CreateDynamicBody(position=(player_renderable.w/PPM, player_renderable.h/PPM))
-    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2 - 0.1,
-                                          player_renderable.h / world.PPM / 2 - 0.1),
+    player_body.fixedRotation = True
+    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2 - 0.2,
+                                          player_renderable.h / world.PPM / 2 - 0.2),
                                      density=1,
                                      friction=0.3)
     world.add_component(player, Physics(body=player_body))
