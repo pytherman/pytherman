@@ -10,7 +10,7 @@ from menuitem import MenuItem
 class Menu:
     pygame.init()
 
-    def __init__(self, screen, items, funcs, bg_color=(0, 0, 0), font=None, font_size=35, font_color=(255, 255, 255)):
+    def __init__(self, screen, bg_color=(0, 0, 0), font=None, font_size=35, font_color=(255, 255, 255)):
 
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
@@ -20,7 +20,13 @@ class Menu:
         self.font = pygame.font.SysFont(font, font_size)
         self.font_color = font_color
         self.items = []
-        self.funcs = funcs
+        self.funcs = OrderedDict()
+        self.funcs["Start Game"] = self.startgame
+        self.funcs["How to play"] = self.hello
+        self.funcs["Instruction"] = self.hello
+        self.funcs["Authors"] = self.hello
+        self.funcs["Quit"] = sys.exit
+        items = self.funcs.keys()
         for index, item in enumerate(items):
             menu_item = MenuItem(item)
             t_h = len(items) * menu_item.height
@@ -58,6 +64,15 @@ class Menu:
                     self.cur_item = 0
         self.items[self.cur_item].set_italic(True)
         self.items[self.cur_item].color_the_item((255, 255, 0))
+
+    def hello(self):
+        print('Hello')
+
+    def startgame(self):
+        pytherman.main()
+
+    def showauthors(self):
+        pass
 
     def set_mouse_selection(self, item, posx, posy):
         if item.is_mouse_on_this(posx, posy):
@@ -104,20 +119,8 @@ class Menu:
 
 
 if __name__ == "__main__":
-    def hello():
-        print('Hello')
-
-    def startgame():
-        pytherman.main()
-
     screen = pygame.display.set_mode((640, 480), 0, 32)
     pygame.display.set_caption('Game Menu')
-    funcs = OrderedDict()
-    funcs["Start Game"] = startgame
-    funcs["How to play"] = hello
-    funcs["Instruction"] = hello
-    funcs["Authors"] = hello
-    funcs["Quit"] = sys.exit
 
-    gm = Menu(screen, funcs.keys(), funcs)
+    gm = Menu(screen)
     gm.run()
