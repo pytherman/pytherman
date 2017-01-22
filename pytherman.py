@@ -104,11 +104,12 @@ def _setup_systems(world, screen):
 
 def _setup_player(world):
     player = world.create_entity()
+    shift = 3 * 40 / 2  # change 40 to field_size
     world.player = player
     player_image = pygame.image.load("assets/player.png")
     player_renderable = Renderable(image=player_image)
     player_body = world.pworld.CreateDynamicBody(
-        position=(64 / PPM, 64 / PPM))
+        position=(shift / PPM, shift / PPM))
     player_body.fixedRotation = True
     player_body.CreatePolygonFixture(
         box=(player_renderable.w / world.PPM / 2 - 0.2,
@@ -125,12 +126,13 @@ def _setup_enemy(world):
     enemy = world.create_entity()
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)
+    shift = 3 * 40 / 2  #change 40 to field_size
     enemy_body = world.pworld.CreateDynamicBody(
-        position=(world.RESOLUTION[0] / PPM - 1,
-                  world.RESOLUTION[1] / PPM - 1))
+        position=((RESOLUTION[0] - shift) / PPM,
+                  (RESOLUTION[1] - shift) / PPM))
     enemy_body.CreatePolygonFixture(
-        box=(enemy_renderable.w / world.PPM / 2,
-             enemy_renderable.h / world.PPM / 2),
+        box=(enemy_renderable.w / world.PPM / 2 - 0.2,
+             enemy_renderable.h / world.PPM / 2 - 0.2),
         density=1,
         friction=0.3)
     world.add_component(enemy, Physics(body=enemy_body))
