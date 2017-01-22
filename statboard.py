@@ -22,10 +22,10 @@ class Statboard(Sprite):
         self.x_level_pos = 20
         self.y_level_pos = 10
 
-        self.x_hp_pos = 100
+        self.x_hp_pos = 120
         self.y_hp_pos = 10
 
-        self.x_points_pos = 200
+        self.x_points_pos = 220
         self.y_points_pos = 10
 
     def prep_scores(self):
@@ -42,4 +42,4 @@ class Statboard(Sprite):
         self.screen.blit(self.level_image, (self.x_level_pos, self.y_level_pos))
         self.screen.blit(self.hp_image, (self.x_hp_pos, self.y_hp_pos))
         self.screen.blit(self.points_image, (self.x_points_pos, self.y_points_pos))
-        pygame.display.flip()
+        # pygame.display.flip()

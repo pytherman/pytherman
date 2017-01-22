@@ -4,6 +4,7 @@ import esper
 import pygame
 
 from components import Physics, Renderable
+from statboard import Statboard
 
 
 class RenderSystem(esper.Processor):
@@ -13,6 +14,7 @@ class RenderSystem(esper.Processor):
         super().__init__()
         self.screen = screen
         self.clear_color = clear_color
+        self.statboard = Statboard(screen)
 
     def process(self):
         self.screen.fill(self.clear_color)
@@ -43,4 +45,6 @@ class RenderSystem(esper.Processor):
             v = [v[0] - renderable.w / 2,
                  self.world.RESOLUTION[1] - v[1] - renderable.h / 2]
             self.screen.blit(renderable.image, v)
+        # self.statboard.level += 1
+        self.statboard.blit()
         pygame.display.flip()
