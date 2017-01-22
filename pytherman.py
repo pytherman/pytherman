@@ -7,7 +7,7 @@ from Box2D.b2 import edgeShape
 
 import core
 import drawboard
-from components import Bomber, Physics, Renderable, Velocity
+from components import Bomber, Physics, Renderable, Velocity, Health
 from messaging import MessageBus
 from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
                      MovementSystem, RenderSystem)
@@ -53,6 +53,7 @@ def main():
     world.screen = screen
     world.to_delete = set()
 
+    level = 0
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
@@ -120,7 +121,8 @@ def _setup_player(world):
     world.add_component(player, Physics(body=player_body))
     world.add_component(player, Velocity(x=0, y=0))
     world.add_component(player, player_renderable)
-    world.add_component(player, Bomber(max=3, cooldown=2))
+    world.add_component(player, Bomber(max=10, cooldown=2))
+    world.add_component(player, Health(hp=5))
     return player
 
 

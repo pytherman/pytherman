@@ -47,6 +47,9 @@ class RenderSystem(esper.Processor):
             v = [v[0] - renderable.w / 2,
                  self.world.RESOLUTION[1] - v[1] - renderable.h / 2]
             self.screen.blit(renderable.image, v)
-        print(self.world.component_for_entity(self.player, Health))
+        hp = (self.world.component_for_entity(self.player, Health))
+        self.statboard.hp = hp.hp
+        bombs = self.world.component_for_entity(self.player, Bomber)
+        self.statboard.bombs = bombs.max
         self.statboard.blit()
         pygame.display.flip()
