@@ -100,9 +100,10 @@ def create_field_with_physics(world, pworld, position_x, position_y, field_size,
     field_body = pworld.CreateDynamicBody(
         position=(position_x, position_y),
         userData=field)
-    field_body.CreatePolygonFixture(box=(field_size / 2,
-                                         field_size / 2),
-                                    density=1,
+    field_body.fixedRotation = True
+    field_body.CreatePolygonFixture(box=(field_size / 2 - 0.1,
+                                         field_size / 2 - 0.1),
+                                    density=1000000,
                                     friction=0.3)
     world.add_component(field, Physics(body=field_body))
     world.add_component(field, field_renderable)

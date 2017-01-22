@@ -4,14 +4,15 @@ import esper
 import time
 import math
 import Box2D
+import pygame
 
-from components import Physics, Explodable
+from components import Physics, Explodable, Renderable
 from messaging import DamageMessage
 from Box2D.b2 import vec2
 
 
-NUM_RAYS = 32
-BLAST_RADIUS = 4
+NUM_RAYS = 64
+BLAST_RADIUS = 2
 BLAST_POWER = 1000
 BLAST_DAMAGE = 1
 
@@ -35,12 +36,17 @@ class ExplosionSystem(esper.Processor):
                     self.world.pworld.RayCast(callback, physics.body.position,
                                               ray_end)
                     if callback.fixture:
-                        force = callback.point - physics.body.position
-                        force.Normalize()
-                        callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
-                                                         point=callback.point,
-                                                         wake=True)
+                        # force = callback.point - physics.body.position
+                        # force.Normalize()
+                        # callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
+                        #                                  point=callback.point,
+                        #                                  wake=True)
                         self.world.msg_bus.add(DamageMessage(entity, callback.fixture.body.userData, BLAST_DAMAGE))
+                explosion_image = pygame.image.load("assets/explosion.png")
+                explosion = self.world.create_entity()
+                explosion_body = self.world.pworld.CreateStaticBody(position=physics.body.position)
+                self.world.add_component(explosion, Renderable(image=explosion_image))
+                self.world.add_component(explosion, Physics(body=explosion_body))
                 self.world.pworld.DestroyBody(physics.body)
                 self.world.delete_entity(entity)
 
@@ -62,4 +68,4 @@ class RayCastClosestCallback(Box2D.b2RayCastCallback):
         self.point = vec2(point)
         self.normal = vec2(normal)
         # We do not want the ray to continue
-        return 0
+        return -1

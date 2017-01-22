@@ -20,7 +20,6 @@ class DamageSystem(esper.Processor):
                     target_hp.hp -= damage.damage
                     if target_hp.hp <= 0:
                         target_physics = self.world.component_for_entity(damage.target, Physics)
-                        print(damage.target)
                         if target_physics.body:
                             self.world.pworld.DestroyBody(target_physics.body)
                             target_physics.body = None

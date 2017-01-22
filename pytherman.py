@@ -49,50 +49,16 @@ def main():
 
     world = esper.World()
     world.pworld = pworld
-    drawboard.draw_board(pworld, world, PPM, RESOLUTION)
 
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
     world.msg_bus = MessageBus()
+    drawboard.draw_board(pworld, world, PPM, RESOLUTION)
 
-    player = world.create_entity()
-    world.player = player
-    player_image = pygame.image.load("assets/player.png")
-    player_renderable = Renderable(image=player_image)
-    player_body = pworld.CreateDynamicBody(position=(player_renderable.w/PPM, player_renderable.h/PPM))
-    player_body.fixedRotation = True
-    player_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2 - 0.2,
-                                          player_renderable.h / world.PPM / 2 - 0.2),
-                                     density=1,
-                                     friction=0.3)
-    world.add_component(player, Physics(body=player_body))
-    world.add_component(player, Velocity(x=0, y=0))
-    world.add_component(player, player_renderable)
-    world.add_component(player, Bomber(max=3, cooldown=2))
-
-    enemy = world.create_entity()
-    enemy_image = pygame.image.load("assets/enemy.png")
-    enemy_renderable = Renderable(image=enemy_image)
-    enemy_body = pworld.CreateDynamicBody(position=(world.RESOLUTION[0]/PPM - int(player_renderable.w/PPM),
-                                                    world.RESOLUTION[1]/PPM - int(player_renderable.h/PPM)))
-    enemy_body.CreatePolygonFixture(box=(player_renderable.w / world.PPM / 2,
-                                         player_renderable.h / world.PPM / 2),
-                                    density=1,
-                                    friction=0.3)
-    world.add_component(enemy, Physics(body=enemy_body))
-    world.add_component(enemy, enemy_renderable)
-
-    render_system = RenderSystem(screen=screen)
-    movement_system = MovementSystem()
-    action_system = ActionSystem()
-    explosion_system = ExplosionSystem()
-    damage_system = DamageSystem()
-    world.add_processor(render_system)
-    world.add_processor(movement_system)
-    world.add_processor(action_system)
-    world.add_processor(explosion_system)
-    world.add_processor(damage_system)
+    _setup_player(world)
+    _setup_enemy(world)
+    _setup_systems(world, screen)
 
     event_handler = core.EventHandler(world=world)
     while event_handler.is_running():
@@ -103,6 +69,54 @@ def main():
         world.process()
         clock.tick(FPS)
         world.msg_bus.clear()
+
+
+def _setup_systems(world, screen):
+    render_system = RenderSystem(screen=screen)
+    world.add_processor(render_system)
+    movement_system = MovementSystem()
+    world.add_processor(movement_system)
+    action_system = ActionSystem()
+    world.add_processor(action_system)
+    explosion_system = ExplosionSystem()
+    world.add_processor(explosion_system)
+    damage_system = DamageSystem()
+    world.add_processor(damage_system)
+
+
+def _setup_player(world):
+    player = world.create_entity()
+    world.player = player
+    player_image = pygame.image.load("assets/player.png")
+    player_renderable = Renderable(image=player_image)
+    player_body = world.pworld.CreateDynamicBody(
+        position=(64 / PPM, 64 / PPM))
+    player_body.fixedRotation = True
+    player_body.CreatePolygonFixture(
+        box=(player_renderable.w / world.PPM / 2 - 0.2,
+             player_renderable.h / world.PPM / 2 - 0.2),
+        density=1,
+        friction=0.3)
+    world.add_component(player, Physics(body=player_body))
+    world.add_component(player, Velocity(x=0, y=0))
+    world.add_component(player, player_renderable)
+    world.add_component(player, Bomber(max=3, cooldown=2))
+
+
+def _setup_enemy(world):
+    enemy = world.create_entity()
+    enemy_image = pygame.image.load("assets/enemy.png")
+    enemy_renderable = Renderable(image=enemy_image)
+    enemy_body = world.pworld.CreateDynamicBody(
+        position=(world.RESOLUTION[0] / PPM - 1,
+                  world.RESOLUTION[1] / PPM - 1))
+    enemy_body.CreatePolygonFixture(
+        box=(enemy_renderable.w / world.PPM / 2,
+             enemy_renderable.h / world.PPM / 2),
+        density=1,
+        friction=0.3)
+    world.add_component(enemy, Physics(body=enemy_body))
+    world.add_component(enemy, enemy_renderable)
 
 
 if __name__ == '__main__':
