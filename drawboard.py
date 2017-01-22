@@ -1,7 +1,8 @@
 """draw area of game"""
 
 import pygame
-from components import Physics, Renderable, Health
+
+from components import Health, Physics, Renderable, Treasure
 from prepare_gamearea import PrepareGamearea
 
 
@@ -108,6 +109,7 @@ def create_field_with_physics(world, pworld, position_x, position_y, field_size,
     world.add_component(field, Physics(body=field_body))
     world.add_component(field, field_renderable)
     world.add_component(field, Health(hp=2))
+    world.add_component(field, Treasure(chance=0.5))
 
 
 def draw_border_walls(pworld, world, PPM, RESOLUTION):

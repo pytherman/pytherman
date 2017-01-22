@@ -8,8 +8,8 @@ Prepare dimensional table of area of game where:
 Class check also if the paths to the enemy and the door exist
 """
 
-import random
 import copy
+import random
 
 
 def bfs(graph_to_search, start, end):

@@ -5,7 +5,7 @@ import time
 import esper
 import pygame
 
-from components import Bomber, Physics, Renderable, Explodable
+from components import Bomber, Explodable, Physics, Renderable
 from messaging import Intent, MessageType
 
 

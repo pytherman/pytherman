@@ -10,7 +10,7 @@ class Message(object):
 
 Intent = Enum('Intent', 'MOVE_UP MOVE_DOWN MOVE_RIGHT MOVE_LEFT \
                          MOVE_CLEAR_VERTICAL MOVE_CLEAR_HORIZONTAL\
-                         PLANT_BOMB')
+                         PLANT_BOMB PLACE_BONUS')
 
 
 class IntentMessage(Message):

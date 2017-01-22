@@ -9,7 +9,8 @@ import core
 import drawboard
 from components import Bomber, Physics, Renderable, Velocity
 from messaging import MessageBus
-from systems import ActionSystem, MovementSystem, RenderSystem, ExplosionSystem, DamageSystem
+from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
+                     MovementSystem, RenderSystem)
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -49,6 +50,8 @@ def main():
 
     world = esper.World()
     world.pworld = pworld
+    world.screen = screen
+    world.to_delete = set()
 
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
@@ -69,6 +72,19 @@ def main():
         world.process()
         clock.tick(FPS)
         world.msg_bus.clear()
+        for entity in world.to_delete:
+            _cleanup_entity(world, entity)
+        world.to_delete = set()
+
+
+def _cleanup_entity(world, entity):
+    physics = world.component_for_entity(
+        entity,
+        Physics)
+    if physics.body:
+        world.pworld.DestroyBody(physics.body)
+        physics.body = None
+    world.delete_entity(entity)
 
 
 def _setup_systems(world, screen):
@@ -82,6 +98,8 @@ def _setup_systems(world, screen):
     world.add_processor(explosion_system)
     damage_system = DamageSystem()
     world.add_processor(damage_system)
+    bonus_system = BonusSystem()
+    world.add_processor(bonus_system)
 
 
 def _setup_player(world):

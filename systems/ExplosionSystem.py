@@ -1,15 +1,15 @@
 """Explosion system"""
 
-import esper
-import time
 import math
-import Box2D
-import pygame
+import time
 
-from components import Physics, Explodable, Renderable
-from messaging import DamageMessage
+import Box2D
+import esper
+import pygame
 from Box2D.b2 import vec2
 
+from components import Explodable, Physics, Renderable
+from messaging import DamageMessage
 
 NUM_RAYS = 64
 BLAST_RADIUS = 2
@@ -28,27 +28,38 @@ class ExplosionSystem(esper.Processor):
                       explodable)) in self.world.get_components(Physics,
                                                                 Explodable):
             if self._should_explode(explodable):
+                hit_already = set()
                 for i in range(NUM_RAYS):
                     angle = math.radians((i / NUM_RAYS) * 360)
                     ray_dir = vec2(math.sin(angle), math.cos(angle))
                     ray_end = physics.body.position + BLAST_RADIUS * ray_dir
                     callback = RayCastClosestCallback()
+                    print(str(physics.body.position) + " " + str(ray_end))
                     self.world.pworld.RayCast(callback, physics.body.position,
                                               ray_end)
-                    if callback.fixture:
+                    # explosion_image = pygame.image.load("assets/t.png")
+                    # explosion = self.world.create_entity()
+                    # explosion_body = self.world.pworld.CreateStaticBody(position=ray_end)
+                    # explosion_body.active = False
+                    # self.world.add_component(explosion, Renderable(image=explosion_image))
+                    # self.world.add_component(explosion, Physics(body=explosion_body))
+                    if callback.fixture and callback.fixture.body.userData not in hit_already:
                         # force = callback.point - physics.body.position
                         # force.Normalize()
                         # callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
                         #                                  point=callback.point,
                         #                                  wake=True)
-                        self.world.msg_bus.add(DamageMessage(entity, callback.fixture.body.userData, BLAST_DAMAGE))
-                explosion_image = pygame.image.load("assets/explosion.png")
-                explosion = self.world.create_entity()
-                explosion_body = self.world.pworld.CreateStaticBody(position=physics.body.position)
-                self.world.add_component(explosion, Renderable(image=explosion_image))
-                self.world.add_component(explosion, Physics(body=explosion_body))
-                self.world.pworld.DestroyBody(physics.body)
-                self.world.delete_entity(entity)
+                        hit_already.add(callback.fixture.body.userData)
+                        self.world.msg_bus.add(DamageMessage(
+                            entity,
+                            callback.fixture.body.userData,
+                            BLAST_DAMAGE))
+                # explosion_image = pygame.image.load("assets/explosion.png")
+                # explosion = self.world.create_entity()
+                # explosion_body = self.world.pworld.CreateStaticBody(position=physics.body.position)
+                # self.world.add_component(explosion, Renderable(image=explosion_image))
+                # self.world.add_component(explosion, Physics(body=explosion_body))
+                self.world.to_delete.add(entity)
 
     def _should_explode(self, explodable):
         if explodable.explosion_time < time.time():
