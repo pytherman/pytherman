@@ -3,18 +3,20 @@
 import esper
 import pygame
 
-from components import Physics, Renderable
+from components import Physics, Renderable, Bomber, Bonus, Health
 from statboard import Statboard
 
 
 class RenderSystem(esper.Processor):
     """Responsible for rendering entities on screen."""
 
-    def __init__(self, screen, clear_color=(0, 0, 0)):
+    def __init__(self, screen, player, world, clear_color=(0, 0, 0)):
         super().__init__()
         self.screen = screen
         self.clear_color = clear_color
         self.statboard = Statboard(screen)
+        self.world = world
+        self.player = player
 
     def process(self):
         self.screen.fill(self.clear_color)
@@ -45,6 +47,6 @@ class RenderSystem(esper.Processor):
             v = [v[0] - renderable.w / 2,
                  self.world.RESOLUTION[1] - v[1] - renderable.h / 2]
             self.screen.blit(renderable.image, v)
-        # self.statboard.level += 1
+        print(self.world.component_for_entity(self.player, Health))
         self.statboard.blit()
         pygame.display.flip()

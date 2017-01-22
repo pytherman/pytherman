@@ -60,9 +60,9 @@ def main():
     drawboard.draw_board(pworld, world, PPM,
                          (RESOLUTION[0], RESOLUTION[1] - 40))  # TODO - change that to something prettier
 
-    _setup_player(world)
+    player = _setup_player(world)
     _setup_enemy(world)
-    _setup_systems(world, screen)
+    _setup_systems(world, screen, player)
 
     event_handler = core.EventHandler(world=world)
     while event_handler.is_running():
@@ -88,8 +88,8 @@ def _cleanup_entity(world, entity):
     world.delete_entity(entity)
 
 
-def _setup_systems(world, screen):
-    render_system = RenderSystem(screen=screen)
+def _setup_systems(world, screen, player):
+    render_system = RenderSystem(screen=screen, world=world, player=player)
     world.add_processor(render_system)
     movement_system = MovementSystem()
     world.add_processor(movement_system)
@@ -121,6 +121,7 @@ def _setup_player(world):
     world.add_component(player, Velocity(x=0, y=0))
     world.add_component(player, player_renderable)
     world.add_component(player, Bomber(max=3, cooldown=2))
+    return player
 
 
 def _setup_enemy(world):
