@@ -11,6 +11,7 @@ from components import Bomber, Physics, Renderable, Velocity
 from messaging import MessageBus
 from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
                      MovementSystem, RenderSystem)
+from statboard import Statboard
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -57,11 +58,14 @@ def main():
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
     world.msg_bus = MessageBus()
-    drawboard.draw_board(pworld, world, PPM, RESOLUTION)
+    drawboard.draw_board(pworld, world, PPM,
+                         (RESOLUTION[0], RESOLUTION[1] - 40))  # TODO - change that to something prettier
 
+    statboard = Statboard(screen)
     _setup_player(world)
     _setup_enemy(world)
     _setup_systems(world, screen)
+    statboard.blit()
 
     event_handler = core.EventHandler(world=world)
     while event_handler.is_running():
@@ -75,6 +79,7 @@ def main():
         for entity in world.to_delete:
             _cleanup_entity(world, entity)
         world.to_delete = set()
+        statboard.blit()
 
 
 def _cleanup_entity(world, entity):
@@ -129,7 +134,7 @@ def _setup_enemy(world):
     shift = 3 * 40 / 2  #change 40 to field_size
     enemy_body = world.pworld.CreateDynamicBody(
         position=((RESOLUTION[0] - shift) / PPM,
-                  (RESOLUTION[1] - shift) / PPM))
+                  (RESOLUTION[1] - 40 - shift) / PPM))
     enemy_body.CreatePolygonFixture(
         box=(enemy_renderable.w / world.PPM / 2 - 0.2,
              enemy_renderable.h / world.PPM / 2 - 0.2),
