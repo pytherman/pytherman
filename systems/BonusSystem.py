@@ -29,18 +29,26 @@ class BonusSystem(esper.Processor):
                     msg.source,
                     Physics).body.position
                 bonus = self.world.create_entity()
+                bonus_renderable = Renderable(image=selected[1])
                 bonus_body = self.world.pworld.CreateStaticBody(
                     position=source_pos)
+                bonus_body.userData = bonus
+                bonus_body.fixedRotation = True
+                bonus_body.CreatePolygonFixture(
+                    box=(bonus_renderable.w / self.world.PPM / 2,
+                         bonus_renderable.h / self.world.PPM / 2),
+                    density=1,
+                    friction=0.3)
                 self.world.add_component(bonus, Bonus(on_pickup=selected[0]))
-                self.world.add_component(bonus, Renderable(image=selected[1]))
+                self.world.add_component(bonus, bonus_renderable)
                 self.world.add_component(bonus, Physics(body=bonus_body))
 
 
 def _increase_hp(world, entity):
-    health = world.get_component(entity, Health)
+    health = world.component_for_entity(entity, Health)
     health.hp += 1
 
 
 def _increase_max_bomb_number(world, entity):
-    bomber = world.get_component(entity, Bomber)
+    bomber = world.component_for_entity(entity, Bomber)
     bomber.max += 1

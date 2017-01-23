@@ -2,6 +2,7 @@
 
 import esper
 import pygame
+import sys
 
 from components import Physics, Renderable, Bomber, Bonus, Health
 from statboard import Statboard
@@ -47,9 +48,14 @@ class RenderSystem(esper.Processor):
             v = [v[0] - renderable.w / 2,
                  self.world.RESOLUTION[1] - v[1] - renderable.h / 2]
             self.screen.blit(renderable.image, v)
-        hp = (self.world.component_for_entity(self.player, Health))
+        try:
+            hp = (self.world.component_for_entity(self.player, Health))
+        except KeyError:
+            print("Jesteś looserem!")
+            sys.exit()
         self.statboard.hp = hp.hp
         bombs = self.world.component_for_entity(self.player, Bomber)
-        self.statboard.bombs = bombs.max
+        print(str(bombs.max) + " " + str(bombs.used))
+        self.statboard.bombs = bombs.max - bombs.used
         self.statboard.blit()
         pygame.display.flip()

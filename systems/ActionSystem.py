@@ -22,13 +22,14 @@ class ActionSystem(esper.Processor):
                                                          Bomber)
                 source_physics = self.world.component_for_entity(intent.source,
                                                                  Physics)
-                if bomber.used < bomber.max or True:
+                if bomber.used < bomber.max:
                     if time.time() > bomber.last_planted + bomber.cooldown:
-                        self._spawn_bomb(source_physics)
+                        self._spawn_bomb(intent.source, source_physics)
                         bomber.last_planted = time.time()
                         bomber.used += 1
+                        print("cokolwiek")
 
-    def _spawn_bomb(self, source_physics):
+    def _spawn_bomb(self, source, source_physics):
         bomb = self.world.create_entity()
         bomb_image = pygame.image.load("assets/tnt_barrel.png")
         bomb_renderable = Renderable(image=bomb_image)
@@ -47,4 +48,4 @@ class ActionSystem(esper.Processor):
         self.world.add_component(bomb, Physics(body=bomb_body))
         self.world.add_component(bomb, bomb_renderable)
         self.world.add_component(bomb,
-                                 Explodable(explosion_time=time.time() + 1))
+                                 Explodable(explosion_time=time.time() + 1, planter=source))

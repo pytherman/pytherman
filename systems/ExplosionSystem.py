@@ -8,7 +8,7 @@ import esper
 import pygame
 from Box2D.b2 import vec2
 
-from components import Explodable, Physics, Renderable
+from components import Explodable, Physics, Renderable, Bomber
 from messaging import DamageMessage
 
 NUM_RAYS = 64
@@ -34,7 +34,7 @@ class ExplosionSystem(esper.Processor):
                     ray_dir = vec2(math.sin(angle), math.cos(angle))
                     ray_end = physics.body.position + BLAST_RADIUS * ray_dir
                     callback = RayCastClosestCallback()
-                    print(str(physics.body.position) + " " + str(ray_end))
+                    # print(str(physics.body.position) + " " + str(ray_end))
                     self.world.pworld.RayCast(callback, physics.body.position,
                                               ray_end)
                     # explosion_image = pygame.image.load("assets/t.png")
@@ -59,6 +59,8 @@ class ExplosionSystem(esper.Processor):
                 # explosion_body = self.world.pworld.CreateStaticBody(position=physics.body.position)
                 # self.world.add_component(explosion, Renderable(image=explosion_image))
                 # self.world.add_component(explosion, Physics(body=explosion_body))
+                bomber = self.world.component_for_entity(explodable.planter, Bomber)
+                bomber.used -= 1
                 self.world.to_delete.add(entity)
 
     def _should_explode(self, explodable):
