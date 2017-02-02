@@ -1,14 +1,17 @@
-import sys
+"""Screen with names of authors"""
 from collections import OrderedDict
 
 import pygame
-import instruction
-import pytherman
-import authors
-from menuitem import MenuItem
+import sys
+from mainmenu import MenuItem
+
+FPS = 60
+PPM = 20  # Pixels per meter (box2d scaling factor)
+RESOLUTION = 720, 480
+TIME_STEP = 1.0 / FPS
 
 
-class Menu:
+class Authors:
     pygame.init()
 
     def __init__(self, screen, bg_color=(0, 0, 0), font=None, font_size=35, font_color=(255, 255, 255)):
@@ -22,16 +25,20 @@ class Menu:
         self.font_color = font_color
         self.items = []
         self.funcs = OrderedDict()
-        self.funcs["Start Game"] = self.startgame
-        self.funcs["Instruction"] = self.instruction
-        self.funcs["Authors"] = self.showauthors
+
+        self.text_color = (255, 255, 255)
+        self.label_image = self.font.render("Authors:", True, self.text_color)
+        self.name1_image = self.font.render("Dominika Zajac", True, self.text_color)
+        self.name2_image = self.font.render("Adam Piekarczyk", True, self.text_color)
+
+        self.funcs["Back"] = self.menu
         self.funcs["Quit"] = sys.exit
         items = self.funcs.keys()
         for index, item in enumerate(items):
             menu_item = MenuItem(item)
             t_h = len(items) * menu_item.height
             pos_x = (self.scr_width / 2) - (menu_item.width / 2)
-            pos_y = (self.scr_height / 2) - (t_h / 2) + ((index * 2) + index * menu_item.height)
+            pos_y = (self.scr_height / 2) - (t_h / 2) + ((index * 2) + index * menu_item.height) + 80
             menu_item.set_position(pos_x, pos_y)
             self.items.append(menu_item)
 
@@ -65,14 +72,10 @@ class Menu:
         self.items[self.cur_item].set_italic(True)
         self.items[self.cur_item].color_the_item((255, 255, 0))
 
-    def instruction(self):
-        instruction.Instruction(self.screen).run()
-
-    def startgame(self):
-        pytherman.main()
-
-    def showauthors(self):
-        authors.Authors(self.screen).run()
+    def menu(self):
+        from mainmenu import Menu
+        gm = Menu(self.screen)
+        gm.run()
 
     def set_mouse_selection(self, item, posx, posy):
         if item.is_mouse_on_this(posx, posy):
@@ -115,12 +118,13 @@ class Menu:
                     (x, y) = pygame.mouse.get_pos()
                     self.set_mouse_selection(item, x, y)
                 self.screen.blit(item.label, item.position)
+
+            self.screen.blit(self.label_image, (250, 90))
+            self.screen.blit(self.name1_image, (200, 150))
+            self.screen.blit(self.name2_image, (200, 200))
             pygame.display.flip()
 
 
-if __name__ == "__main__":
-    screen = pygame.display.set_mode((640, 480), 0, 32)
+if __name__ == '__main__':
     pygame.display.set_caption('Game Menu')
-
-    gm = Menu(screen)
-    gm.run()
+    Authors.run()
