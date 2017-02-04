@@ -85,6 +85,7 @@ def main():
 
 
 def _cleanup_entity(world, entity):
+    """Delete entity from world with all its components"""
     physics = world.component_for_entity(
         entity,
         Physics)
@@ -95,6 +96,7 @@ def _cleanup_entity(world, entity):
 
 
 def _setup_systems(world, screen, player):
+    """Setup all systems in world"""
     render_system = RenderSystem(screen=screen, world=world, player=player)
     world.add_processor(render_system)
     movement_system = MovementSystem()
@@ -110,6 +112,7 @@ def _setup_systems(world, screen, player):
 
 
 def _setup_player(world):
+    """Create new player with all its components and add it to world"""
     player = world.create_entity()
     shift = 3 * 40 / 2  # change 40 to field_size
     world.player = player
@@ -133,6 +136,7 @@ def _setup_player(world):
 
 
 def _setup_enemy(world):
+    """Create new enemy with all its components and add it to world"""
     enemy = world.create_entity()
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)

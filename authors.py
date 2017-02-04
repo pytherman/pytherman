@@ -4,9 +4,10 @@ from collections import OrderedDict
 import pygame
 import sys
 from mainmenu import MenuItem
+import navigation_helpers as nh
 
 FPS = 60
-PPM = 20  # Pixels per meter (box2d scaling factor)
+PPM = 20
 RESOLUTION = 720, 480
 TIME_STEP = 1.0 / FPS
 
@@ -15,7 +16,7 @@ class Authors:
     pygame.init()
 
     def __init__(self, screen, bg_color=(0, 0, 0), font=None, font_size=35, font_color=(255, 255, 255)):
-
+        """Setup variables and basic navigation"""
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
@@ -45,47 +46,14 @@ class Authors:
         self.mouse_is_visible = True
         self.cur_item = None
 
-    def set_if_mouse_visible(self):
-        if self.mouse_is_visible:
-            pygame.mouse.set_visible(True)
-        else:
-            pygame.mouse.set_visible(False)
-
-    def set_item_selection(self, key):
-        length = len(self.items)
-        for item in self.items:
-            item.set_italic(False)
-            item.color_the_item((255, 255, 255))
-        if self.cur_item is None:
-            self.cur_item = 0
-        else:
-            if key == pygame.K_UP:
-                if self.cur_item > 0:
-                    self.cur_item -= 1
-                else:
-                    self.cur_item = length - 1
-            elif key == pygame.K_DOWN:
-                if self.cur_item < length - 1:
-                    self.cur_item += 1
-                else:
-                    self.cur_item = 0
-        self.items[self.cur_item].set_italic(True)
-        self.items[self.cur_item].color_the_item((255, 255, 0))
-
     def menu(self):
+        """Go back to main menu"""
         from mainmenu import Menu
         gm = Menu(self.screen)
         gm.run()
 
-    def set_mouse_selection(self, item, posx, posy):
-        if item.is_mouse_on_this(posx, posy):
-            item.color_the_item((255, 255, 0))
-            item.set_italic(True)
-        else:
-            item.color_the_item((255, 255, 255))
-            item.set_italic(False)
-
     def run(self):
+        """Main loop of screen, wait and react for user selection, show navigation, etc"""
         mainloop = True
         while mainloop:
             self.clock.tick(60)
@@ -95,7 +63,7 @@ class Authors:
                     mainloop = False
                 if event.type == pygame.KEYDOWN:
                     self.mouse_is_visible = False
-                    self.set_item_selection(event.key)
+                    nh.set_item_selection(self, event.key)
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         text = self.items[self.cur_item].text
                         mainloop = False
@@ -110,13 +78,13 @@ class Authors:
                 self.mouse_is_visible = True
                 self.cur_item = None
 
-            self.set_if_mouse_visible()
+            nh.set_if_mouse_visible(self.mouse_is_visible)
 
             self.screen.fill(self.bg_color)
             for item in self.items:
                 if self.mouse_is_visible:
                     (x, y) = pygame.mouse.get_pos()
-                    self.set_mouse_selection(item, x, y)
+                    nh.set_mouse_selection(item, x, y)
                 self.screen.blit(item.label, item.position)
 
             self.screen.blit(self.label_image, (250, 90))

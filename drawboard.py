@@ -7,6 +7,7 @@ from prepare_gamearea import PrepareGamearea
 
 
 def draw_board(pworld, world, PPM, RESOLUTION):
+    """Draw all fields on gamearea"""
     width, height = RESOLUTION
     wooden_field_image = pygame.image.load("assets/fields/woden_big_lines.png")
     wooden_field_renderable = Renderable(image=wooden_field_image)
@@ -24,7 +25,7 @@ def draw_board(pworld, world, PPM, RESOLUTION):
 
 
 def draw_field(world, pworld, PPM, y, x, value):
-    """todo - change to enum"""
+    """Draw the special type of field decided by given parameter value"""
     if value == 0:
         draw_grass_field(world, pworld, PPM, x, y)
     elif value == 1:
@@ -36,6 +37,7 @@ def draw_field(world, pworld, PPM, y, x, value):
 
 
 def draw_grass_field(world, pworld, PPM, x, y):
+    """draw grass field on given position"""
     field_image = pygame.image.load("assets/fields/grass_lines.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w
@@ -45,6 +47,7 @@ def draw_grass_field(world, pworld, PPM, x, y):
 
 
 def draw_wooden_field(world, pworld, PPM, x, y):
+    """draw wooden wall on given position"""
     field_image = pygame.image.load("assets/fields/woden_big_lines.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w
@@ -54,6 +57,7 @@ def draw_wooden_field(world, pworld, PPM, x, y):
 
 
 def draw_concrete_field(world, pworld, PPM, x, y):
+    """draw concrete wall on given position"""
     field_image = pygame.image.load("assets/fields/concrete_drops.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w
@@ -63,7 +67,7 @@ def draw_concrete_field(world, pworld, PPM, x, y):
 
 
 def draw_door_field(world, pworld, PPM, x, y):
-    """todo - change this method!"""
+    """draw wooden wall with hidden door on given position"""
     field_image = pygame.image.load("assets/fields/hard_wall.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w
@@ -73,7 +77,7 @@ def draw_door_field(world, pworld, PPM, x, y):
 
 
 def create_field(world, pworld, position_x, position_y, field_renderable):
-    """create field without physics"""
+    """create field without physics with image from paramteres on given position"""
     field = world.create_entity()
     field_body = pworld.CreateStaticBody(
         position=(position_x, position_y))
@@ -82,7 +86,7 @@ def create_field(world, pworld, position_x, position_y, field_renderable):
 
 
 def create_static_field(world, pworld, position_x, position_y, field_size, field_renderable):
-    """draw static field"""
+    """draw static field with image from parameters on given position"""
     field = world.create_entity()
     field_body = pworld.CreateStaticBody(
         position=(position_x, position_y),
@@ -96,7 +100,7 @@ def create_static_field(world, pworld, position_x, position_y, field_size, field
 
 
 def create_field_with_physics(world, pworld, position_x, position_y, field_size, field_renderable):
-    """draw field with physics"""
+    """Draw field with physics with image from parameters on given position"""
     field = world.create_entity()
     field_body = pworld.CreateDynamicBody(
         position=(position_x, position_y),
@@ -113,7 +117,7 @@ def create_field_with_physics(world, pworld, position_x, position_y, field_size,
 
 
 def draw_border_walls(pworld, world, PPM, RESOLUTION):
-    """draw border walls"""
+    """Draw border walls around the gamearea"""
     field_image = pygame.image.load("assets/fields/hard_wall.png")
     field_renderable = Renderable(image=field_image)
 

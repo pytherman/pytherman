@@ -1,17 +1,18 @@
-"""Screen with names of authors"""
+"""Screen with instruction how to play"""
 from collections import OrderedDict
 import pygame
 import sys
 from pygame.locals import *
 
 from menuitem import MenuItem
+import navigation_helpers as nh
 
 
 class Instruction:
     pygame.init()
 
     def __init__(self, screen, bg_color=(0, 0, 0), font=None, font_size=35, font_color=(255, 255, 255)):
-
+        """set up all variables, prepare basic navigation"""
         self.screen = screen
         self.scr_width = self.screen.get_rect().width
         self.scr_height = self.screen.get_rect().height
@@ -40,47 +41,14 @@ class Instruction:
         self.text_wall = TextWall()
         self.text_wall.parse_text(instruction_text)
 
-    def set_if_mouse_visible(self):
-        if self.mouse_is_visible:
-            pygame.mouse.set_visible(True)
-        else:
-            pygame.mouse.set_visible(False)
-
-    def set_item_selection(self, key):
-        length = len(self.items)
-        for item in self.items:
-            item.set_italic(False)
-            item.color_the_item((255, 255, 255))
-        if self.cur_item is None:
-            self.cur_item = 0
-        else:
-            if key == pygame.K_UP:
-                if self.cur_item > 0:
-                    self.cur_item -= 1
-                else:
-                    self.cur_item = length - 1
-            elif key == pygame.K_DOWN:
-                if self.cur_item < length - 1:
-                    self.cur_item += 1
-                else:
-                    self.cur_item = 0
-        self.items[self.cur_item].set_italic(True)
-        self.items[self.cur_item].color_the_item((255, 255, 0))
-
-    def set_mouse_selection(self, item, posx, posy):
-        if item.is_mouse_on_this(posx, posy):
-            item.color_the_item((255, 255, 0))
-            item.set_italic(True)
-        else:
-            item.color_the_item((255, 255, 255))
-            item.set_italic(False)
-
     def menu(self):
+        """Go back to menu"""
         from mainmenu import Menu
         gm = Menu(self.screen)
         gm.run()
 
     def run(self):
+        """Main loop of screen, wait and react for user selection, show navigation, etc"""
         mainloop = True
         while mainloop:
             self.clock.tick(60)
@@ -90,7 +58,7 @@ class Instruction:
                     mainloop = False
                 if event.type == pygame.KEYDOWN:
                     self.mouse_is_visible = False
-                    self.set_item_selection(event.key)
+                    nh.set_item_selection(self, event.key)
                     if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                         text = self.items[self.cur_item].text
                         mainloop = False
@@ -105,13 +73,13 @@ class Instruction:
                 self.mouse_is_visible = True
                 self.cur_item = None
 
-            self.set_if_mouse_visible()
+            nh.set_if_mouse_visible(self.mouse_is_visible)
 
             self.screen.fill(self.bg_color)
             for item in self.items:
                 if self.mouse_is_visible:
                     (x, y) = pygame.mouse.get_pos()
-                    self.set_mouse_selection(item, x, y)
+                    nh.set_mouse_selection(item, x, y)
                 self.screen.blit(item.label, item.position)
 
             self.text_wall.draw()
@@ -120,6 +88,7 @@ class Instruction:
 
 class TextLine(object):
     def __init__(self, font=None, size=24, text=""):
+        """Set up all variables, colors and fonts"""
         self.font_name = font
         self.font_size = size
         self.color_fg = Color("white")
@@ -135,12 +104,13 @@ class TextLine(object):
         self._render()
 
     def _render(self):
+        """Render line of text"""
         self.dirty = False
         self.image = self.font.render(self._text, self.aa, self.color_fg)
         self.rect = self.image.get_rect()
 
     def draw(self):
-        # Call this do draw, always prefers to use cache
+        """Call this do draw, always prefers to use cache"""
         if self.dirty or (self.image is None):
             self._render()
         self.screen.blit(self.image, self.rect)
@@ -164,11 +134,11 @@ class TextLine(object):
 
 
 class TextWall(object):
-    # Manages multiple lines of text / paragraphs.
+    """Manages multiple lines of text"""
     def __init__(self, font=None, size=24):
         self.font = font
         self.font_size = size
-        self.offset = Rect(20, 20, 1, 1)  # offset of whole wall
+        self.offset = Rect(20, 20, 3, 3)
 
         self.screen = pygame.display.get_surface()
         self.dirty = True
@@ -177,11 +147,9 @@ class TextWall(object):
         self._render()
 
     def _render(self):
-        # render list
+        """render list of lines"""
         self.dirty = False
         self.text_lines = [TextLine(self.font, self.font_size, line) for line in self._text_paragraph]
-
-        # offset whole paragraph
         self.text_lines[0].rect.top = self.offset.top
 
         # offset the height of each line
@@ -192,12 +160,12 @@ class TextWall(object):
             prev = t.rect
 
     def parse_text(self, text):
-        # parse raw text to something usable
+        """parse raw text to something usable"""
         self._text_paragraph = text.split("\n")
         self._render()
 
     def draw(self):
-        # draw with cached surfaces
+        """draw with cached surfaces"""
         if self.dirty:
             self._render()
         for text in self.text_lines:

@@ -13,7 +13,9 @@ import random
 
 
 def bfs(graph_to_search, start, end):
-    """ find the shortest way from start to end"""
+    """Find the shortest way from start to end using
+    breadth-first search algorithm. Function returns list of nodes
+    in the shortest way"""
     queue = [[start]]
     visited = set()
 
@@ -33,13 +35,16 @@ def bfs(graph_to_search, start, end):
 
 
 def check_if_path_exists(graph, start, end):
+    """Return true if path from start to end exists,
+    otherwise returns false"""
     return bfs(graph, start, end) is not None
 
 
 class PrepareGamearea:
-    """return a board of game with places for special fields"""
+    """Return a board of game with places for special fields"""
 
     def __init__(self, number_of_rows, number_of_columns):
+        """Set up all variables in class"""
         self.number_of_rows = number_of_rows
         self.number_of_columns = number_of_columns
         self.table = [[0 for _ in range(self.number_of_columns)] for _ in range(self.number_of_rows)]
@@ -48,6 +53,8 @@ class PrepareGamearea:
         self.door_field_y = -1
 
     def generate_graph(self):
+        """Function returns graph with all existing
+        paths between nodes"""
         self.graph = {}
         for i in range(1, self.number_of_columns - 1):
             for j in range(1, self.number_of_rows - 1):
@@ -64,6 +71,9 @@ class PrepareGamearea:
         return self.graph
 
     def prepare_list_of_special_fields(self):
+        """Return list of tiles where special walls can be placed.
+        From list were removed the closest to main character and enemy fields.
+        From list are also removed border tiles where solid borders are placed."""
         fields_to_add = []
         for i in range(1, self.number_of_rows - 1):
             for j in range(1, self.number_of_columns - 1):
@@ -78,6 +88,10 @@ class PrepareGamearea:
         return fields_to_add
 
     def set_fields(self, number, list_to_add, value):
+        """Function marks fields where number of solid walls should be placed.
+        Fields are finding randomly. Before marking field bfs algorithm checks
+        if after adding path from start to hidden door and enemy will exists.
+        Function return list where the rest of special fields can be placed"""
         for i in range(number):
             x, y = (random.choice(list_to_add))
             tmp = copy.deepcopy(self.graph)
@@ -92,6 +106,10 @@ class PrepareGamearea:
         return list_to_add
 
     def set_fields_without_checking_path(self, number, list_to_add, value):
+        """Function finds the number of fields where special field
+        (given by value parameter) should be placed. Fields are chosen randomly.
+        Special fields must be destroyable, so we don't have to check if after adding special filed
+        path exists. Function returns list of tiles where special fields can be added."""
         for i in range(number):
             x, y = (random.choice(list_to_add))
             self.table[x][y] = value
@@ -99,6 +117,9 @@ class PrepareGamearea:
         return list_to_add
 
     def set_door_field(self, list_to_add):
+        """Function randomly find a place where door hidden
+        by wooden wall should be placed. Function return list
+        of tiles where the rest of special fields should be placed."""
         while self.door_field_x == -1:
             x, y = (random.choice(list_to_add))
             self.table[x][y] = 3
@@ -108,6 +129,10 @@ class PrepareGamearea:
         return list_to_add
 
     def create_table_of_game(self):
+        """Function control creating area of game - use
+        helper functions to mark places for walls and hidden door.
+        Function return table where each tiles is mark by number
+        meaning which kind of wall should be placed on it."""
         list_to_add = self.prepare_list_of_special_fields()
         number_of_special_fields = int(0.9 * (len(list_to_add) - 1))
         number_of_wooden_fields = int(0.6 * number_of_special_fields)
