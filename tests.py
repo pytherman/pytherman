@@ -136,6 +136,48 @@ class prepare_gamearea_tests(unittest.TestCase):
         ga.set_door_field(ga.prepare_list_of_special_fields())
         self.assertEqual(ga.table[ga.door_field_x][ga.door_field_y], 3)
 
+    def test_create_table_of_game_should_not_be_empty(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.create_table_of_game()
+        self.assertTrue(isinstance(arr, list))
+
+    def test_create_table_should_have_value_of_three_where_door_is_placed(self):
+        ga = prepare_gamearea.PrepareGamearea(9, 9)
+        arr = ga.create_table_of_game()
+        x = ga.door_field_x
+        y = ga.door_field_y
+        self.assertEqual(arr[x][y], 3)
+
+    def test_set_fields_should_return_list(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields(3, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertTrue(isinstance(arr, list))
+
+    def test_set_fields_should_return_shorter_list_when_fields_were_added(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields(3, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertLess(len(arr), 3)
+
+    def test_set_fields_should_return_the_same_list_when_fields_were_not_added(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields(0, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertEqual(arr, [(1, 1), (1, 2), (2, 2)])
+
+    def test_set_fields_without_checking_path_should_return_list(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields_without_checking_path(3, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertTrue(isinstance(arr, list))
+
+    def test_set_fields_without_checking_path_should_return_shorter_list_when_fields_were_added(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields_without_checking_path(3, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertLess(len(arr), 3)
+
+    def test_set_fields_without_checking_path_should_return_the_same_list_when_fields_were_not_added(self):
+        ga = prepare_gamearea.PrepareGamearea(5, 5)
+        arr = ga.set_fields_without_checking_path(0, [(1, 1), (1, 2), (2, 2)], 2)
+        self.assertEqual(arr, [(1, 1), (1, 2), (2, 2)])
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(prepare_gamearea_tests)
 print(unittest.TextTestRunner(verbosity=3).run(suite))
