@@ -10,6 +10,7 @@ from Box2D.b2 import vec2
 
 from components import Explodable, Physics, Renderable, Bomber
 from messaging import DamageMessage
+import explosion_anim
 
 NUM_RAYS = 64
 BLAST_RADIUS = 2
