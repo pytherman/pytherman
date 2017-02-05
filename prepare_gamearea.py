@@ -54,7 +54,7 @@ class PrepareGamearea:
 
     def generate_graph(self):
         """Function returns graph with all existing
-        paths between nodes"""
+        paths between nodes. Function ignores connections with bordered walls"""
         self.graph = {}
         for i in range(1, self.number_of_columns - 1):
             for j in range(1, self.number_of_rows - 1):
@@ -71,7 +71,7 @@ class PrepareGamearea:
         return self.graph
 
     def prepare_list_of_special_fields(self):
-        """Return list of tiles where special walls can be placed.
+        """Return basic list of tiles where special walls can be placed.
         From list were removed the closest to main character and enemy fields.
         From list are also removed border tiles where solid borders are placed."""
         fields_to_add = []
@@ -79,12 +79,18 @@ class PrepareGamearea:
             for j in range(1, self.number_of_columns - 1):
                 fields_to_add.append((i, j))
 
-        fields_to_add.remove((1, 1))
-        fields_to_add.remove((2, 1))
-        fields_to_add.remove((1, 2))
-        fields_to_add.remove((self.number_of_rows - 2, self.number_of_columns - 2))
-        fields_to_add.remove((self.number_of_rows - 3, self.number_of_columns - 2))
-        fields_to_add.remove((self.number_of_rows - 2, self.number_of_columns - 3))
+        if (1, 1) in fields_to_add:
+            fields_to_add.remove((1, 1))
+        if (2, 1) in fields_to_add:
+            fields_to_add.remove((2, 1))
+        if (1, 2) in fields_to_add:
+            fields_to_add.remove((1, 2))
+        if (self.number_of_rows - 2, self.number_of_columns - 2) in fields_to_add:
+            fields_to_add.remove((self.number_of_rows - 2, self.number_of_columns - 2))
+        if (self.number_of_rows - 3, self.number_of_columns - 2) in fields_to_add:
+            fields_to_add.remove((self.number_of_rows - 3, self.number_of_columns - 2))
+        if (self.number_of_rows - 2, self.number_of_columns - 3) in fields_to_add:
+            fields_to_add.remove((self.number_of_rows - 2, self.number_of_columns - 3))
         return fields_to_add
 
     def set_fields(self, number, list_to_add, value):
