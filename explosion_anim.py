@@ -3,17 +3,11 @@ from os import path
 
 img_dir = path.join(path.dirname(__file__), 'assets/explosion')
 
-WIDTH = 480
-HEIGHT = 600
 FPS = 60
 
 # define colors
 
 BLACK = (0, 0, 0)
-
-# initialize pygame and create window
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 flag = True
 
@@ -50,15 +44,12 @@ class Explosion(pygame.sprite.Sprite):
 def run(pos, screen):
     explosion_anim = {}
     explosion_anim['lg'] = []
-    explosion_anim['sm'] = []
     for i in range(9):
         filename = 'regularExplosion0{}.png'.format(i)
         img = pygame.image.load(path.join(img_dir, filename)).convert()
         img.set_colorkey(BLACK)
-        img_lg = pygame.transform.scale(img, (75, 75))
+        img_lg = pygame.transform.scale(img, (95, 95))
         explosion_anim['lg'].append(img_lg)
-        img_sm = pygame.transform.scale(img, (32, 32))
-        explosion_anim['sm'].append(img_sm)
 
     all_sprites = pygame.sprite.Group()
     expl = Explosion(pos, 'lg', explosion_anim)
@@ -66,19 +57,12 @@ def run(pos, screen):
         all_sprites.update()
         expl = Explosion(pos, 'lg', explosion_anim)
         all_sprites.add(expl)
-        screen.fill(BLACK)
         all_sprites.draw(screen)
         all_sprites.update()
         pygame.display.flip()
 
     expl.kill()
     all_sprites.remove(expl)
-    screen.fill(BLACK)
     all_sprites.draw(screen)
     all_sprites.update()
     pygame.display.flip()
-
-
-run((60, 60), screen)
-run((160, 60), screen)
-run((380, 160), screen)

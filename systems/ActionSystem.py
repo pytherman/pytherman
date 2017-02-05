@@ -27,7 +27,6 @@ class ActionSystem(esper.Processor):
                         self._spawn_bomb(intent.source, source_physics)
                         bomber.last_planted = time.time()
                         bomber.used += 1
-                        print("cokolwiek")
 
     def _spawn_bomb(self, source, source_physics):
         bomb = self.world.create_entity()

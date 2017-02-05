@@ -103,7 +103,7 @@ def _setup_systems(world, screen, player):
     world.add_processor(movement_system)
     action_system = ActionSystem()
     world.add_processor(action_system)
-    explosion_system = ExplosionSystem()
+    explosion_system = ExplosionSystem(screen=screen)
     world.add_processor(explosion_system)
     damage_system = DamageSystem()
     world.add_processor(damage_system)

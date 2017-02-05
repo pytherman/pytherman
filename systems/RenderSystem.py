@@ -55,7 +55,6 @@ class RenderSystem(esper.Processor):
             sys.exit()
         self.statboard.hp = hp.hp
         bombs = self.world.component_for_entity(self.player, Bomber)
-        print(str(bombs.max) + " " + str(bombs.used))
         self.statboard.bombs = bombs.max - bombs.used
         self.statboard.blit()
         pygame.display.flip()

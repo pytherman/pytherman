@@ -11,7 +11,6 @@ class prepare_gamearea_tests(unittest.TestCase):
     def test_bfs_should_return_list_of_one_element_when_start_and_end_point_are_the_same(self):
         ga = prepare_gamearea.PrepareGamearea(1, 1)
         score = prepare_gamearea.bfs(ga.graph, (0, 0), (0, 0))
-        print(score)
         self.assertEqual(len(score), 1)
 
     def test_bfs_should_return_the_shortest_way_for_full_graph(self):
