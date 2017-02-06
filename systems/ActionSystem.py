@@ -43,7 +43,7 @@ class ActionSystem(esper.Processor):
         # For now bomb physics is disabled, need to implement collision
         # listener and filter in PreSolve and mark bomb as "clean"
         # after first contact with source ended (EndContact)
-        bomb_body.active = False
+        # bomb_body.active = False
         self.world.add_component(bomb, Physics(body=bomb_body))
         self.world.add_component(bomb, bomb_renderable)
         self.world.add_component(bomb,

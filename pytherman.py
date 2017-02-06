@@ -8,7 +8,7 @@ from Box2D import b2ContactListener
 
 import core
 import drawboard
-from components import Bomber, Physics, Renderable, Velocity, Health, Bonus
+from components import Bomber, Physics, Renderable, Velocity, Health, Bonus, Explodable
 from messaging import MessageBus
 from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
                      MovementSystem, RenderSystem)
@@ -163,12 +163,26 @@ class PythermanContactListener(b2ContactListener):
         pass
 
     def EndContact(self, contact):
-        pass
+        entity_a = contact.fixtureA.body.userData
+        entity_b = contact.fixtureB.body.userData
+        player = -1
+        bomb = -1
+        if entity_a == self.world.player:
+            player = entity_a
+            bomb = entity_b
+        if entity_b == self.world.player:
+            player = entity_b
+            bomb = entity_a
+        if player != -1 and bomb != -1:
+            try:
+                b = self.world.component_for_entity(bomb, Explodable)
+                b.clean = True
+            except KeyError:
+                pass
 
     def PreSolve(self, contact, oldManifold):
         entity_a = contact.fixtureA.body.userData
         entity_b = contact.fixtureB.body.userData
-        # print(str(entity_a) + " " + str(entity_b))
         player = -1
         bonus = -1
         if entity_a == self.world.player:
@@ -184,7 +198,12 @@ class PythermanContactListener(b2ContactListener):
                 self.world.to_delete.add(bonus)
                 contact.enabled = False
             except KeyError:
-                pass
+                try:
+                    b = self.world.component_for_entity(bonus, Explodable)
+                    if not b.clean:
+                        contact.enabled = False
+                except KeyError:
+                    pass
 
     def PostSolve(self, contact, impulse):
         pass
