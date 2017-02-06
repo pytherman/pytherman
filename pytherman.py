@@ -15,7 +15,7 @@ from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
-RESOLUTION = 720, 480
+RESOLUTION = 720, 680
 TIME_STEP = 1.0 / FPS
 
 
@@ -70,7 +70,7 @@ def main():
     _setup_enemy(world)
     _setup_systems(world, screen, player)
 
-    event_handler = core.EventHandler(world=world)
+    event_handler = core.EventHandler(world=world, screen=screen)
     while event_handler.is_running():
         for event in pygame.event.get():
             event_handler.handle(event)
@@ -103,7 +103,7 @@ def _setup_systems(world, screen, player):
     world.add_processor(movement_system)
     action_system = ActionSystem()
     world.add_processor(action_system)
-    explosion_system = ExplosionSystem(screen=screen)
+    explosion_system = ExplosionSystem(screen=screen, resolution=RESOLUTION)
     world.add_processor(explosion_system)
     damage_system = DamageSystem()
     world.add_processor(damage_system)

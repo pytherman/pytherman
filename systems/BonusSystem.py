@@ -18,7 +18,9 @@ class BonusSystem(esper.Processor):
             (_increase_hp,
              pygame.image.load("assets/bonus/hp.png")),
             (_increase_max_bomb_number,
-             pygame.image.load("assets/bonus/bomb.png"))
+             pygame.image.load("assets/bonus/bomb.png")),
+            (_increase_range_of_bomb,
+             pygame.image.load("assets/bonus/plus.png"))
         ]
 
     def process(self):
@@ -52,3 +54,8 @@ def _increase_hp(world, entity):
 def _increase_max_bomb_number(world, entity):
     bomber = world.component_for_entity(entity, Bomber)
     bomber.max += 1
+
+
+def _increase_range_of_bomb(world, entity):
+    bomber = world.component_for_entity(entity, Bomber)
+    bomber.bombrange = 'lg'

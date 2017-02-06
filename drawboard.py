@@ -68,6 +68,12 @@ def draw_concrete_field(world, pworld, PPM, x, y):
 
 def draw_door_field(world, pworld, PPM, x, y):
     """draw wooden wall with hidden door on given position"""
+    field_image = pygame.image.load("assets/door.png")
+    field_renderable = Renderable(image=field_image)
+    field_size = int(40 / PPM)
+    create_field(world, pworld, x * field_size + field_size / 2, y * field_size + field_size / 2,
+                 field_renderable)
+
     field_image = pygame.image.load("assets/fields/hard_wall.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w

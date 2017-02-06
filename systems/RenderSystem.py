@@ -51,8 +51,9 @@ class RenderSystem(esper.Processor):
         try:
             hp = (self.world.component_for_entity(self.player, Health))
         except KeyError:
-            print("Jesteś looserem!")
-            sys.exit()
+            from mainmenu import Menu
+            gm = Menu(self.screen)
+            gm.run()
         self.statboard.hp = hp.hp
         bombs = self.world.component_for_entity(self.player, Bomber)
         self.statboard.bombs = bombs.max - bombs.used

@@ -4,6 +4,7 @@ import random
 
 import esper
 
+from components import Bomber
 from components import Health, Treasure
 from messaging import Intent, IntentMessage, MessageType
 
@@ -26,6 +27,9 @@ class DamageSystem(esper.Processor):
                 if target_hp.hp <= 0:
                     self.world.to_delete.add(damage.target)
                     self._try_to_place_bonus(damage.target)
+            target_bomber = self.world.component_for_entity(damage.target, Bomber)
+            if target_bomber:
+                target_bomber.bombrange = 'sm'
         except KeyError:
             pass
 

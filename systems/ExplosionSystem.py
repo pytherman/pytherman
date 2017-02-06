@@ -16,14 +16,14 @@ NUM_RAYS = 64
 BLAST_RADIUS = 2
 BLAST_POWER = 1000
 BLAST_DAMAGE = 1
-RESOLUTION = 720, 480
 
 class ExplosionSystem(esper.Processor):
     """Responsible for exploding things up."""
 
-    def __init__(self, screen):
+    def __init__(self, screen, resolution):
         super().__init__()
         self.screen = screen
+        self.resolution = resolution
 
     def process(self):
         for (entity, (physics,
@@ -34,6 +34,11 @@ class ExplosionSystem(esper.Processor):
                 for i in range(NUM_RAYS):
                     angle = math.radians((i / NUM_RAYS) * 360)
                     ray_dir = vec2(math.sin(angle), math.cos(angle))
+                    bomber = self.world.component_for_entity(explodable.planter, Bomber)
+                    if bomber.bombrange == 'lg':
+                        BLAST_RADIUS = 3
+                    else:
+                        BLAST_RADIUS = 2
                     ray_end = physics.body.position + BLAST_RADIUS * ray_dir
 
                     callback = RayCastClosestCallback()
@@ -66,9 +71,10 @@ class ExplosionSystem(esper.Processor):
                 x, y = physics.body.position
                 x *= self.world.PPM
                 y *= self.world.PPM
-                y = RESOLUTION[1] - y
-                explosion_anim.run((x, y), self.screen)
+                y = self.resolution[1] - y
                 bomber = self.world.component_for_entity(explodable.planter, Bomber)
+                explosion_anim.run((x, y), self.screen, bomber.bombrange)
+
                 bomber.used -= 1
                 self.world.to_delete.add(entity)
 

@@ -11,11 +11,12 @@ flag = True
 
 
 class Explosion(pygame.sprite.Sprite):
-    def __init__(self, center, explosion_anim):
+    def __init__(self, center, size, explosion_anim):
         """Set up all variables"""
         pygame.sprite.Sprite.__init__(self)
         self.explosion_anim = explosion_anim
-        self.image = explosion_anim[0]
+        self.size = size
+        self.image = explosion_anim[self.size][0]
         self.rect = self.image.get_rect()
         self.rect.center = center
         self.frame = 0
@@ -30,31 +31,36 @@ class Explosion(pygame.sprite.Sprite):
         if now - self.last_update > self.frame_rate:
             self.last_update = now
             self.frame += 1
-            if self.frame == len(self.explosion_anim):
+            if self.frame == len(self.explosion_anim[self.size]):
                 global flag
                 flag = False
             else:
                 center = self.rect.center
-                self.image = self.explosion_anim[self.frame]
-                self.rect = self.image.get_rect()
-                self.rect.center = center
+                try:
+                    self.image = self.explosion_anim[self.size][self.frame]
+                    self.rect = self.image.get_rect()
+                    self.rect.center = center
+                except IndexError:
+                    flag = False
 
 
-def run(pos, screen):
+def run(pos, screen, size):
     """Prepare images and run animation"""
-    explosion_anim = []
+    explosion_anim = {'sm': [], 'lg': []}
     for i in range(9):
         filename = 'regularExplosion0{}.png'.format(i)
         img = pygame.image.load(path.join(img_dir, filename)).convert()
         img.set_colorkey(BLACK)
-        img_lg = pygame.transform.scale(img, (95, 95))
-        explosion_anim.append(img_lg)
+        img_sm = pygame.transform.scale(img, (95, 95))
+        img_lg = pygame.transform.scale(img, (150, 150))
+        explosion_anim['sm'].append(img_sm)
+        explosion_anim['lg'].append(img_lg)
 
     all_sprites = pygame.sprite.Group()
-    expl = Explosion(pos, explosion_anim)
+    expl = Explosion(pos, size, explosion_anim)
     while flag:
         all_sprites.update()
-        expl = Explosion(pos, explosion_anim)
+        expl = Explosion(pos, size, explosion_anim)
         all_sprites.add(expl)
         all_sprites.draw(screen)
         all_sprites.update()

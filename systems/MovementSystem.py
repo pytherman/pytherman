@@ -16,16 +16,16 @@ class MovementSystem(esper.Processor):
         for intent in self.world.msg_bus.get_by_type(MessageType.INTENT):
             if intent.intent == Intent.MOVE_LEFT:
                 self.world.component_for_entity(intent.source,
-                                                Velocity).x = -10
+                                                Velocity).x = -30
             elif intent.intent == Intent.MOVE_RIGHT:
                 self.world.component_for_entity(intent.source,
-                                                Velocity).x = 10
+                                                Velocity).x = 30
             elif intent.intent == Intent.MOVE_UP:
                 self.world.component_for_entity(intent.source,
-                                                Velocity).y = 10
+                                                Velocity).y = 30
             elif intent.intent == Intent.MOVE_DOWN:
                 self.world.component_for_entity(intent.source,
-                                                Velocity).y = -10
+                                                Velocity).y = -30
             elif intent.intent == Intent.MOVE_CLEAR_HORIZONTAL:
                 self.world.component_for_entity(intent.source,
                                                 Velocity).x = 0
