@@ -15,7 +15,7 @@ from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
-RESOLUTION = 720, 680
+RESOLUTION = 720, 480
 TIME_STEP = 1.0 / FPS
 
 
