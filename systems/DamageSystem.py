@@ -6,6 +6,7 @@ import esper
 
 from components import Bomber
 from components import Health, Treasure
+from components import Velocity
 from messaging import Intent, IntentMessage, MessageType
 
 
@@ -30,6 +31,10 @@ class DamageSystem(esper.Processor):
             target_bomber = self.world.component_for_entity(damage.target, Bomber)
             if target_bomber:
                 target_bomber.bombrange = 'sm'
+                target_bomber.damage = 1
+            target_velocity = self.world.component_for_entity(damage.target, Velocity)
+            if target_velocity:
+                target_velocity.value = 20
         except KeyError:
             pass
 

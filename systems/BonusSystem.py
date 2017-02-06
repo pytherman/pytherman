@@ -6,6 +6,7 @@ import esper
 import pygame
 
 from components import Bomber, Bonus, Health, Physics, Renderable
+from components import Velocity
 from messaging import Intent, MessageType
 
 
@@ -20,7 +21,11 @@ class BonusSystem(esper.Processor):
             (_increase_max_bomb_number,
              pygame.image.load("assets/bonus/bomb.png")),
             (_increase_range_of_bomb,
-             pygame.image.load("assets/bonus/plus.png"))
+             pygame.image.load("assets/bonus/plus.png")),
+            (_increase_damage_of_bomb,
+             pygame.image.load("assets/bonus/plus2.png")),
+            (_increase_velocity,
+             pygame.image.load("assets/bonus/shoes.png"))
         ]
 
     def process(self):
@@ -59,3 +64,13 @@ def _increase_max_bomb_number(world, entity):
 def _increase_range_of_bomb(world, entity):
     bomber = world.component_for_entity(entity, Bomber)
     bomber.bombrange = 'lg'
+
+
+def _increase_damage_of_bomb(world, entity):
+    bomber = world.component_for_entity(entity, Bomber)
+    bomber.damage = 2
+
+
+def _increase_velocity(world, entity):
+    velocity = world.component_for_entity(entity, Velocity)
+    velocity.value = 40

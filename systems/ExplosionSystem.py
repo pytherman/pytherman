@@ -15,7 +15,7 @@ import explosion_anim
 NUM_RAYS = 64
 BLAST_RADIUS = 2
 BLAST_POWER = 1000
-BLAST_DAMAGE = 1
+
 
 class ExplosionSystem(esper.Processor):
     """Responsible for exploding things up."""
@@ -61,7 +61,7 @@ class ExplosionSystem(esper.Processor):
                         self.world.msg_bus.add(DamageMessage(
                             entity,
                             callback.fixture.body.userData,
-                            BLAST_DAMAGE))
+                            bomber.damage))
 
                 # explosion_image = pygame.image.load("assets/explosion.png")
                 # explosion = self.world.create_entity()
