@@ -15,7 +15,7 @@ class RenderSystem(esper.Processor):
         super().__init__()
         self.screen = screen
         self.clear_color = clear_color
-        self.statboard = Statboard(screen)
+        self.statboard = Statboard(screen, world)
         self.world = world
         self.player = player
 
@@ -57,5 +57,6 @@ class RenderSystem(esper.Processor):
         self.statboard.hp = hp.hp
         bombs = self.world.component_for_entity(self.player, Bomber)
         self.statboard.bombs = bombs.max - bombs.used
+        self.statboard.level = self.world.level
         self.statboard.blit()
         pygame.display.flip()

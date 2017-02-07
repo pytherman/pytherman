@@ -2,6 +2,8 @@
 
 import pygame
 
+import pytherman
+from components import Bonus
 from components import Health, Physics, Renderable, Treasure
 from prepare_gamearea import PrepareGamearea
 
@@ -68,11 +70,23 @@ def draw_concrete_field(world, pworld, PPM, x, y):
 
 def draw_door_field(world, pworld, PPM, x, y):
     """draw wooden wall with hidden door on given position"""
-    field_image = pygame.image.load("assets/door.png")
-    field_renderable = Renderable(image=field_image)
     field_size = int(40 / PPM)
-    create_field(world, pworld, x * field_size + field_size / 2, y * field_size + field_size / 2,
-                 field_renderable)
+    source_pos = (x * field_size + field_size / 2, y * field_size + field_size / 2)
+    bonus = world.create_entity()
+    field_image = pygame.image.load("assets/door.png")
+    bonus_renderable = Renderable(image=field_image)
+    bonus_body = world.pworld.CreateStaticBody(
+        position=source_pos)
+    bonus_body.userData = bonus
+    bonus_body.fixedRotation = True
+    bonus_body.CreatePolygonFixture(
+        box=(bonus_renderable.w / world.PPM / 8,
+             bonus_renderable.h / world.PPM / 8),
+        density=0,
+        friction=0.3)
+    world.add_component(bonus, Bonus(on_pickup=_start_next_level))
+    world.add_component(bonus, bonus_renderable)
+    world.add_component(bonus, Physics(body=bonus_body))
 
     field_image = pygame.image.load("assets/fields/hard_wall.png")
     field_renderable = Renderable(image=field_image)
@@ -80,6 +94,10 @@ def draw_door_field(world, pworld, PPM, x, y):
     field_size = int(field_size / PPM)
     create_field_with_physics(world, pworld, x * field_size + field_size / 2, y * field_size + field_size / 2,
                               field_size, field_renderable)
+
+
+def _start_next_level(world, entity):
+    world.next_level = True
 
 
 def create_field(world, pworld, position_x, position_y, field_renderable):
@@ -115,7 +133,7 @@ def create_field_with_physics(world, pworld, position_x, position_y, field_size,
     field_body.CreatePolygonFixture(box=(field_size / 2 - 0.1,
                                          field_size / 2 - 0.1),
                                     density=1000000,
-                                    friction=0.3)
+                                    friction=6000)
     world.add_component(field, Physics(body=field_body))
     world.add_component(field, field_renderable)
     world.add_component(field, Health(hp=2))
