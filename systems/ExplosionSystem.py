@@ -59,7 +59,7 @@ class ExplosionSystem(esper.Processor):
                 x, y = physics.body.position
                 x *= self.world.PPM
                 y *= self.world.PPM
-                y = self.resolution[1] - y
+                y = self.world.RESOLUTION[1] - y
                 bomber = self.world.component_for_entity(explodable.planter, Bomber)
                 explosion_anim.run((x, y), self.screen, bomber.bombrange)
 

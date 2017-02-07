@@ -57,8 +57,9 @@ def main():
     world.pworld = pworld
     world.screen = screen
     world.to_delete = set()
+    world.level = 1
+    world.next_level = False
 
-    level = 0
     # Not sure if this is a good practice
     world.RESOLUTION = RESOLUTION
     world.PPM = PPM
@@ -72,6 +73,33 @@ def main():
 
     event_handler = core.EventHandler(world=world, screen=screen)
     while event_handler.is_running():
+        if world.next_level:
+            tmp = world
+            world = esper.World()
+            pworld = Box2D.b2.world(
+                gravity=(0, 0),
+                doSleep=True,
+                contactListener=PythermanContactListener(world=world))
+            setup_world_boundaries(pworld)
+
+            world.pworld = pworld
+            world.screen = screen
+            world.to_delete = set()
+            print("next level!")
+            world.next_level = False
+            world.level = tmp.level + 1
+            x, y = tmp.RESOLUTION
+            y += 40
+            world.RESOLUTION = (x, y)
+            world.PPM = PPM
+            screen = pygame.display.set_mode(world.RESOLUTION)
+            world.msg_bus = MessageBus()
+            drawboard.draw_board(pworld, world, PPM,
+                                 (world.RESOLUTION[0], world.RESOLUTION[1] - 40))
+            _setup_enemy(world)
+            player = _setup_player(world)
+            _setup_systems(world, screen, player)
+            event_handler = core.EventHandler(world=world, screen=screen)
         for event in pygame.event.get():
             event_handler.handle(event)
         pworld.Step(TIME_STEP, 10, 10)
@@ -145,8 +173,8 @@ def _setup_enemy(world):
     enemy_renderable = Renderable(image=enemy_image)
     shift = 3 * 40 / 2  # change 40 to field_size
     enemy_body = world.pworld.CreateDynamicBody(
-        position=((RESOLUTION[0] - shift) / PPM,
-                  (RESOLUTION[1] - 40 - shift) / PPM))
+        position=((world.RESOLUTION[0] - shift) / world.PPM,
+                  (world.RESOLUTION[1] - 40 - shift) / world.PPM))
     enemy_body.userData = enemy
     enemy_body.fixedRotation = True
     enemy_body.CreatePolygonFixture(

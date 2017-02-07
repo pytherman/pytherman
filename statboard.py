@@ -7,12 +7,12 @@ from pygame.sprite import Sprite
 
 
 class Statboard(Sprite):
-    def __init__(self, screen):
+    def __init__(self, screen, world):
         """Set up type of font, colors and all variables for stats. """
         Sprite.__init__(self)
         self.screen = screen
 
-        self.level = 0
+        self.level = world.level
         self.hp = 0
         self.bombs = 0
 
