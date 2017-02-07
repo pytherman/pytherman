@@ -8,3 +8,4 @@ from .Explodable import Explodable
 from .Health import Health
 from .Treasure import Treasure
 from .Bonus import Bonus
+from .AIControllable import AIControllable

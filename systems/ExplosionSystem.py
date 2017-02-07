@@ -42,21 +42,9 @@ class ExplosionSystem(esper.Processor):
                     ray_end = physics.body.position + BLAST_RADIUS * ray_dir
 
                     callback = RayCastClosestCallback()
-                    # print(str(physics.body.position) + " " + str(ray_end))
                     self.world.pworld.RayCast(callback, physics.body.position,
                                               ray_end)
-                    # explosion_image = pygame.image.load("assets/t.png")
-                    # explosion = self.world.create_entity()
-                    # explosion_body = self.world.pworld.CreateStaticBody(position=ray_end)
-                    # explosion_body.active = False
-                    # self.world.add_component(explosion, Renderable(image=explosion_image))
-                    # self.world.add_component(explosion, Physics(body=explosion_body))
                     if callback.fixture and callback.fixture.body.userData not in hit_already:
-                        # force = callback.point - physics.body.position
-                        # force.Normalize()
-                        # callback.fixture.body.ApplyForce(force=force * BLAST_POWER,
-                        #                                  point=callback.point,
-                        #                                  wake=True)
                         hit_already.add(callback.fixture.body.userData)
                         self.world.msg_bus.add(DamageMessage(
                             entity,

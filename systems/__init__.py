@@ -6,3 +6,4 @@ from .ActionSystem import ActionSystem
 from .ExplosionSystem import ExplosionSystem
 from .DamageSystem import DamageSystem
 from .BonusSystem import BonusSystem
+from .AISystem import AISystem

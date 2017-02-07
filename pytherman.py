@@ -8,10 +8,10 @@ from Box2D import b2ContactListener
 
 import core
 import drawboard
-from components import Bomber, Physics, Renderable, Velocity, Health, Bonus, Explodable
+from components import Bomber, Physics, Renderable, Velocity, Health, Bonus, Explodable, AIControllable
 from messaging import MessageBus
 from systems import (ActionSystem, BonusSystem, DamageSystem, ExplosionSystem,
-                     MovementSystem, RenderSystem)
+                     MovementSystem, RenderSystem, AISystem)
 
 FPS = 60
 PPM = 20  # Pixels per meter (box2d scaling factor)
@@ -99,6 +99,8 @@ def _setup_systems(world, screen, player):
     """Setup all systems in world"""
     render_system = RenderSystem(screen=screen, world=world, player=player)
     world.add_processor(render_system)
+    ai_system = AISystem()
+    world.add_processor(ai_system)
     movement_system = MovementSystem()
     world.add_processor(movement_system)
     action_system = ActionSystem()
@@ -138,20 +140,26 @@ def _setup_player(world):
 def _setup_enemy(world):
     """Create new enemy with all its components and add it to world"""
     enemy = world.create_entity()
+    print("enemy id {}".format(enemy))
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)
     shift = 3 * 40 / 2  # change 40 to field_size
     enemy_body = world.pworld.CreateDynamicBody(
         position=((RESOLUTION[0] - shift) / PPM,
                   (RESOLUTION[1] - 40 - shift) / PPM))
+    enemy_body.userData = enemy
     enemy_body.fixedRotation = True
     enemy_body.CreatePolygonFixture(
         box=(enemy_renderable.w / world.PPM / 2 - 0.2,
              enemy_renderable.h / world.PPM / 2 - 0.2),
         density=1,
         friction=0.3)
+    enemy_body.userData = enemy
     world.add_component(enemy, Physics(body=enemy_body))
     world.add_component(enemy, enemy_renderable)
+    world.add_component(enemy, AIControllable())
+    world.add_component(enemy, Bomber(max=3, cooldown=4))
+    world.add_component(enemy, Velocity(x=0, y=0))
 
 
 class PythermanContactListener(b2ContactListener):
