@@ -80,15 +80,14 @@ def draw_door_field(world, pworld, PPM, x, y):
     bonus_body.userData = bonus
     bonus_body.fixedRotation = True
     bonus_body.CreatePolygonFixture(
-        box=(bonus_renderable.w / world.PPM / 8,
-             bonus_renderable.h / world.PPM / 8),
+        box=(0.01, 0.01),
         density=0,
         friction=0.3)
     world.add_component(bonus, Bonus(on_pickup=_start_next_level))
     world.add_component(bonus, bonus_renderable)
     world.add_component(bonus, Physics(body=bonus_body))
 
-    field_image = pygame.image.load("assets/fields/hard_wall.png")
+    field_image = pygame.image.load("assets/fields/woden_big_lines.png")
     field_renderable = Renderable(image=field_image)
     field_size = field_renderable.w
     field_size = int(field_size / PPM)

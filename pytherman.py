@@ -187,7 +187,7 @@ def _setup_enemy(world):
     world.add_component(enemy, Physics(body=enemy_body))
     world.add_component(enemy, enemy_renderable)
     world.add_component(enemy, AIControllable())
-    world.add_component(enemy, Bomber(max=3, cooldown=4))
+    world.add_component(enemy, Bomber(max=100, cooldown=4))
     world.add_component(enemy, Velocity(x=0, y=0))
 
 

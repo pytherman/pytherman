@@ -194,15 +194,9 @@ if __name__ == '__main__':
     pygame.display.set_caption('Instruction')
     Instruction.run()
 
-instruction_text = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed aliquet
-tellus eros, eu faucibus dui. Phasellus eleifend, massa id ornare sodales, est urna
-congue tellus, vitae varius metus nunc non enim. Mauris elementum, arcu vitae tempor euismod, justo turpis malesuada est, sed dictum nunc nulla nec mauris. Cras felis eros, elementum vitae sollicitudin in, elementum et augue. Proin eget nunc at dui congue pretium. Donec ut ipsum ut lacus mollis tristique.
-
-Proin pulvinar metus nec mi semper semper. Pellentesque habitant morbi tristique
-senectus et netus et malesuada fames ac turpis egestas. Proin in diam odio. Vestibulum
-at neque sed ante sodales eleifend quis id dui. Mauris sollicitudin, metus a semper consectetur,
-est lectus varius erat, sit amet ultrices tortor nisi id justo. Aliquam elementum vestibulum dui ut auctor. Mauris commodo sapien vitae augue tempus sagittis. Morbi a nibh lectus, sed porta nibh. Donec et est ac dui sodales aliquet tristique et arcu. Nullam enim felis, posuere vel rutrum eu, euismod a purus. Morbi porta cursus libero, id rutrum elit lacinia vitae.
-
-In condimentum ultrices ipsum, ut convallis odio egestas et. Cras at egestas elit. Morbi
-quis neque ligula. Sed tempor, sem at fringilla rhoncus, diam quam mollis nisi, vitae semper
-mi massa sit amet tellus. Vivamus congue commodo ornare. Morbi et mi non sem malesuada rutrum. Etiam est purus, interdum ut placerat sit amet, tempus eget eros. Duis eget augue quis diam facilisis blandit. Ut vulputate adipiscing eleifend. """
+instruction_text = """Pytherman is strategic game, based on popular game called Bomberman.
+You have to find secret door hidden in one of wooden walls on each level.
+Wooden walls may be destroyed by bombs - normally, you need two explosions
+but some of bonuses can reduce this number. Bonuses can also increase
+number of your lives, bombs etc.
+"""
