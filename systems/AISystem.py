@@ -1,57 +1,124 @@
+"""Class woth basic artificial intelligence for enemy in game"""
+import random
 import esper
 import math
 
 import Box2D
 from Box2D.b2 import vec2
 from components import AIControllable, Physics, Explodable, Health
+from components import Bomber
+from components import Velocity
 from systems.ExplosionSystem import RayCastClosestCallback
 from messaging import IntentMessage, Intent
 
 
 class AISystem(esper.Processor):
+    """class with behaiour of enemy"""
+
     def __init__(self):
         super().__init__()
+        self.move_handler = self.dummy_ai
 
-    def process(self):
-        for entity, (ai) in self.world.get_components(AIControllable):
-            bombs = self._get_in_range(entity, Explodable)
-            # print(bombs)
-            (closest, dist, v_x, v_y) = self._get_closest(entity, bombs)
-            # print("{} {} {} {}".format(closest, dist, v_x, v_y))
-            # print(dist)
-            if dist < 2:
-                if v_x > 0:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_LEFT))
-                else:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_RIGHT))
-                if v_y > 0:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_DOWN))
-                else:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_UP))
+    def dummy_ai(self, entity):
+        """basic dummy ai - move inn random direction, plant bomb in random time"""
+        arr = [Intent.MOVE_LEFT, Intent.MOVE_RIGHT, Intent.MOVE_UP, Intent.MOVE_DOWN, Intent.PLANT_BOMB]
+        self.world.msg_bus.add(IntentMessage(entity, arr[random.randint(0, 4)]))
+
+    def smarter_ai(self, entity):
+        """a little smarter ai - move randomly but plant bomb only if is close to something destroyable"""
+        velocity = self.world.component_for_entity(entity, Velocity)
+        velocity.value = 10
+        arr = [Intent.MOVE_LEFT, Intent.MOVE_RIGHT, Intent.MOVE_UP, Intent.MOVE_DOWN, Intent.PLANT_BOMB]
+        destroyable = self._get_in_range(entity, Health)
+        (closest, dist, v_x, v_y) = self._get_closest(entity, destroyable)
+        if dist < 2:
+            self.world.msg_bus.add(IntentMessage(entity, Intent.PLANT_BOMB))
+        else:
+            self.world.msg_bus.add(IntentMessage(entity, arr[random.randint(0, 3)]))
+
+    def smarter_and_faster_ai(self, entity):
+        """ai is faster then the dummy one and enemy is twice faster then them"""
+        velocity = self.world.component_for_entity(entity, Velocity)
+        velocity.value = 20
+        arr = [Intent.MOVE_LEFT, Intent.MOVE_RIGHT, Intent.MOVE_UP, Intent.MOVE_DOWN, Intent.PLANT_BOMB]
+        destroyable = self._get_in_range(entity, Health)
+        (closest, dist, v_x, v_y) = self._get_closest(entity, destroyable)
+        if dist < 2:
+            self.world.msg_bus.add(IntentMessage(entity, Intent.PLANT_BOMB))
+        else:
+            self.world.msg_bus.add(IntentMessage(entity, arr[random.randint(0, 3)]))
+
+    def smarter_faster_and_run_away_for_bombs_ai(self, entity):
+        """ai check if bomb is planted close to enemy and run away"""
+        velocity = self.world.component_for_entity(entity, Velocity)
+        velocity.value = 20
+        arr = [Intent.MOVE_LEFT, Intent.MOVE_RIGHT, Intent.MOVE_UP, Intent.MOVE_DOWN, Intent.PLANT_BOMB]
+        bombs = self._get_in_range(entity, Explodable)
+        (closest, dist, v_x, v_y) = self._get_closest(entity, bombs)
+        if dist < 2:
+            if v_x > 0:
+                self.world.msg_bus.add(IntentMessage(entity,
+                                                     Intent.MOVE_LEFT))
+            else:
+                self.world.msg_bus.add(IntentMessage(entity,
+                                                     Intent.MOVE_RIGHT))
+            if v_y > 0:
+                self.world.msg_bus.add(IntentMessage(entity,
+                                                     Intent.MOVE_DOWN))
+            else:
+                self.world.msg_bus.add(IntentMessage(entity,
+                                                     Intent.MOVE_UP))
+        else:
             destroyable = self._get_in_range(entity, Health)
             (closest, dist, v_x, v_y) = self._get_closest(entity, destroyable)
             if dist < 2:
-                self.world.msg_bus.add(IntentMessage(entity,
-                                                     Intent.PLANT_BOMB))
+                self.world.msg_bus.add(IntentMessage(entity, Intent.PLANT_BOMB))
             else:
-                if v_x < 0:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_LEFT))
-                else:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_RIGHT))
-                if v_y < 0:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_DOWN))
-                else:
-                    self.world.msg_bus.add(IntentMessage(entity,
-                                                         Intent.MOVE_UP))
+                self.world.msg_bus.add(IntentMessage(entity, arr[random.randint(0, 3)]))
+
+    def smarter_faster_run_away_for_bombs_and_having_bigger_range_of_bombs_ai(self, entity):
+        """ai has bigger range of bombs"""
+        velocity = self.world.component_for_entity(entity, Velocity)
+        velocity.value = 20
+        bomber = self.world.component_for_entity(entity, Bomber)
+        bomber.bombrange = 'lg'
+        arr = [Intent.MOVE_LEFT, Intent.MOVE_RIGHT, Intent.MOVE_UP, Intent.MOVE_DOWN, Intent.PLANT_BOMB]
+        bombs = self._get_in_range(entity, Explodable)
+        (closest, dist, v_x, v_y) = self._get_closest(entity, bombs)
+        if dist < 2:
+            if v_x > 0:
+                self.world.msg_bus.add(IntentMessage(entity, Intent.MOVE_LEFT))
+            else:
+                self.world.msg_bus.add(IntentMessage(entity, Intent.MOVE_RIGHT))
+            if v_y > 0:
+                self.world.msg_bus.add(IntentMessage(entity, Intent.MOVE_DOWN))
+            else:
+                self.world.msg_bus.add(IntentMessage(entity, Intent.MOVE_UP))
+        else:
+            destroyable = self._get_in_range(entity, Health)
+            (closest, dist, v_x, v_y) = self._get_closest(entity, destroyable)
+            if dist < 2:
+                self.world.msg_bus.add(IntentMessage(entity, Intent.PLANT_BOMB))
+            else:
+                self.world.msg_bus.add(IntentMessage(entity, arr[random.randint(0, 3)]))
+
+    def process(self):
+        """move of enemy"""
+        if self.world.level > 8:
+            self.move_handler = self.smarter_faster_run_away_for_bombs_and_having_bigger_range_of_bombs_ai
+        elif self.world.level > 6:
+            self.move_handler = self.smarter_faster_and_run_away_for_bombs_ai
+        elif self.world.level > 4:
+            self.move_handler = self.smarter_and_faster_ai
+        elif self.world.level > 2:
+            self.move_handler = self.smarter_ai
+        else:
+            self.move_handler = self.dummy_ai
+        for entity, _ in self.world.get_components(AIControllable):
+            self.move_handler(entity)
 
     def _get_in_range(self, ent, elem_type):
+        """Return collection of elems of elem_type close to enemy"""
         collection = set()
         physics = self.world.component_for_entity(ent, Physics)
         NUM_RAYS = 64
@@ -73,6 +140,7 @@ class AISystem(esper.Processor):
         return collection
 
     def _get_closest(self, ent, collection):
+        """find the closest elem to enemy from collectior"""
         physics = self.world.component_for_entity(ent, Physics)
         center = physics.body.position
         max_dist = 1e6

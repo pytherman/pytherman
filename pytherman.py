@@ -19,23 +19,23 @@ RESOLUTION = 720, 480
 TIME_STEP = 1.0 / FPS
 
 
-def setup_world_boundaries(pworld):
+def setup_world_boundaries(pworld, world):
     """Sets static walls around board."""
     pworld.CreateStaticBody(
         position=(0, 0),
-        shapes=edgeShape(vertices=((0, 0), (36, 0)))
+        shapes=edgeShape(vertices=((0, 0), (world.RESOLUTION[0] / 20, 0)))
     )
     pworld.CreateStaticBody(
         position=(0, 0),
-        shapes=edgeShape(vertices=((0, 0), (0, 24)))
+        shapes=edgeShape(vertices=((0, 0), (0, world.RESOLUTION[1] / 20)))
     )
     pworld.CreateStaticBody(
         position=(0, 0),
-        shapes=edgeShape(vertices=((36, 24), (0, 24)))
+        shapes=edgeShape(vertices=((world.RESOLUTION[0] / 20, world.RESOLUTION[1] / 20), (0, world.RESOLUTION[1] / 20)))
     )
     pworld.CreateStaticBody(
         position=(0, 0),
-        shapes=edgeShape(vertices=((36, 24), (36, 0)))
+        shapes=edgeShape(vertices=((world.RESOLUTION[0] / 20, world.RESOLUTION[1] / 20), (world.RESOLUTION[0] / 20, 0)))
     )
 
 
@@ -47,12 +47,12 @@ def main():
     screen = pygame.display.set_mode(RESOLUTION)
 
     world = esper.World()
-
+    world.RESOLUTION = RESOLUTION
     pworld = Box2D.b2.world(
         gravity=(0, 0),
         doSleep=True,
         contactListener=PythermanContactListener(world=world))
-    setup_world_boundaries(pworld)
+    setup_world_boundaries(pworld, world)
 
     world.pworld = pworld
     world.screen = screen
@@ -61,7 +61,7 @@ def main():
     world.next_level = False
 
     # Not sure if this is a good practice
-    world.RESOLUTION = RESOLUTION
+
     world.PPM = PPM
     world.msg_bus = MessageBus()
     drawboard.draw_board(pworld, world, PPM,
@@ -80,7 +80,10 @@ def main():
                 gravity=(0, 0),
                 doSleep=True,
                 contactListener=PythermanContactListener(world=world))
-            setup_world_boundaries(pworld)
+            x, y = tmp.RESOLUTION
+            y += 40
+            world.RESOLUTION = (x, y)
+            setup_world_boundaries(pworld, world)
 
             world.pworld = pworld
             world.screen = screen
@@ -88,17 +91,16 @@ def main():
             print("next level!")
             world.next_level = False
             world.level = tmp.level + 1
-            x, y = tmp.RESOLUTION
-            y += 40
-            world.RESOLUTION = (x, y)
+
             world.PPM = PPM
             screen = pygame.display.set_mode(world.RESOLUTION)
             world.msg_bus = MessageBus()
             drawboard.draw_board(pworld, world, PPM,
                                  (world.RESOLUTION[0], world.RESOLUTION[1] - 40))
-            _setup_enemy(world)
+            enemy = _setup_enemy(world)
             player = _setup_player(world)
             _setup_systems(world, screen, player)
+            set_image_of_enemy(world, enemy)
             event_handler = core.EventHandler(world=world, screen=screen)
         for event in pygame.event.get():
             event_handler.handle(event)
@@ -111,6 +113,20 @@ def main():
             _cleanup_entity(world, entity)
         world.to_delete = set()
 
+
+def set_image_of_enemy(world, enemy):
+    if world.level > 8:
+        enemy_image = pygame.image.load("assets/enemy5.png")
+    elif world.level > 6:
+        enemy_image = pygame.image.load("assets/enemy4.png")
+    elif world.level > 4:
+        enemy_image = pygame.image.load("assets/enemy3.png")
+    elif world.level > 2:
+        enemy_image = pygame.image.load("assets/enemy2.png")
+    else:
+        enemy_image = pygame.image.load("assets/enemy.png")
+    enemy_renderable = Renderable(image=enemy_image)
+    world.add_component(enemy, enemy_renderable)
 
 def _cleanup_entity(world, entity):
     """Delete entity from world with all its components"""
@@ -168,7 +184,6 @@ def _setup_player(world):
 def _setup_enemy(world):
     """Create new enemy with all its components and add it to world"""
     enemy = world.create_entity()
-    print("enemy id {}".format(enemy))
     world.enemy = enemy
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)
@@ -189,7 +204,7 @@ def _setup_enemy(world):
     world.add_component(enemy, AIControllable())
     world.add_component(enemy, Bomber(max=100, cooldown=4))
     world.add_component(enemy, Velocity(x=0, y=0))
-
+    return enemy
 
 class PythermanContactListener(b2ContactListener):
     def __init__(self, world):
