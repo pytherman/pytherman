@@ -169,6 +169,7 @@ def _setup_enemy(world):
     """Create new enemy with all its components and add it to world"""
     enemy = world.create_entity()
     print("enemy id {}".format(enemy))
+    world.enemy = enemy
     enemy_image = pygame.image.load("assets/enemy.png")
     enemy_renderable = Renderable(image=enemy_image)
     shift = 3 * 40 / 2  # change 40 to field_size
@@ -221,10 +222,10 @@ class PythermanContactListener(b2ContactListener):
         entity_b = contact.fixtureB.body.userData
         player = -1
         bonus = -1
-        if entity_a == self.world.player:
+        if entity_a == self.world.player or entity_a == self.world.enemy:
             player = entity_a
             bonus = entity_b
-        if entity_b == self.world.player:
+        if entity_b == self.world.player or entity_b == self.world.enemy:
             player = entity_b
             bonus = entity_a
         if player != -1 and bonus != -1:
